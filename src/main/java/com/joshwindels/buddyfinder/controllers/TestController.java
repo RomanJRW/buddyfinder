@@ -15,7 +15,7 @@ public class TestController {
 
     @GetMapping("/server")
     public String testServerEndpoint() {
-        return "buddyfinder test endpoint";
+        return "test endpoint response";
     }
 
     @GetMapping("/db")
