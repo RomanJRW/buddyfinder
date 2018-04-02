@@ -22,8 +22,9 @@ public class TestController {
     }
 
     @GetMapping("/db")
-    public Integer dbTestConnectionEndpoint() {
-        return testDBRepository.getFirstExcursionDetails();
+    public Map<String, String> dbTestConnectionEndpoint() {
+        String dbConnect = testDBRepository.getFirstExcursionDetails() != null ? "success" : "fail";
+        return Collections.singletonMap("DB Test", dbConnect);
     }
 
 }
