@@ -1,0 +1,47 @@
+CREATE TABLE users
+(
+  id            SERIAL       NOT NULL
+    CONSTRAINT users_pkey
+    PRIMARY KEY,
+  username      VARCHAR(50)  NOT NULL,
+  password      VARCHAR(250) NOT NULL,
+  email_address VARCHAR(100) NOT NULL,
+  telephone_no  VARCHAR(25)
+);
+
+CREATE UNIQUE INDEX users_id_uindex
+  ON users (id);
+
+CREATE UNIQUE INDEX users_username_uindex
+  ON users (username);
+
+CREATE TABLE excursions
+(
+  id                   SERIAL         NOT NULL
+    CONSTRAINT excursions_pkey
+    PRIMARY KEY,
+  owner_id             INTEGER        NOT NULL
+    CONSTRAINT excursions_users_id_fk
+    REFERENCES users,
+  name                 VARCHAR(50)    NOT NULL,
+  start_location       VARCHAR(50)    NOT NULL,
+  finish_location      VARCHAR(50)    NOT NULL,
+  start_date           DATE           NOT NULL,
+  end_date             DATE           NOT NULL,
+  est_cost_pp_sterling NUMERIC(10, 2) NOT NULL,
+  required_buddies     INTEGER        NOT NULL,
+  description          VARCHAR(255)   NOT NULL
+);
+
+CREATE UNIQUE INDEX excursions_id_uindex
+  ON excursions (id);
+
+CREATE TABLE user_excursion_interest_map
+(
+  user_id      INTEGER NOT NULL
+    CONSTRAINT user_excursion_interest_map_users_id_fk
+    REFERENCES users,
+  excursion_id INTEGER NOT NULL
+    CONSTRAINT user_excursion_interest_map_excursions_id_fk
+    REFERENCES excursions
+);
