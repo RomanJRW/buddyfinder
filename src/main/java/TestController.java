@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/test")
 public class TestController {
 
-    @GetMapping
+    @GetMapping("/")
     public String testEndpoint() {
         return "buddyfinder test endpoint";
     }
