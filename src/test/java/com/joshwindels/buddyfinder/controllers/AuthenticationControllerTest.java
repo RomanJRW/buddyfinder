@@ -37,4 +37,25 @@ public class AuthenticationControllerTest {
         assertEquals("invalid email address",
                 authenticationController.registerUser("username", "Pa55word", "test", "0123456789"));
     }
+
+    @Test
+    public void givenNoDomainEmailAddress_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
+        verify(userRepositoryMock, never()).storeUser("username", "Pa55word", "test@", "0123456789");
+        assertEquals("invalid email address",
+                authenticationController.registerUser("username", "Pa55word", "test@", "0123456789"));
+    }
+
+    @Test
+    public void givenNoTLDEmailAddress_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
+        verify(userRepositoryMock, never()).storeUser("username", "Pa55word", "test@example", "0123456789");
+        assertEquals("invalid email address",
+                authenticationController.registerUser("username", "Pa55word", "test@example", "0123456789"));
+    }
+
+    @Test
+    public void givenNoLocalPartEmailAddress_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
+        verify(userRepositoryMock, never()).storeUser("username", "Pa55word", "@example.com", "0123456789");
+        assertEquals("invalid email address",
+                authenticationController.registerUser("username", "Pa55word", "@example.com", "0123456789"));
+    }
 }
