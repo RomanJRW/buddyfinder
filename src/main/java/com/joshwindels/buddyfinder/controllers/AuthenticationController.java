@@ -24,7 +24,7 @@ public class AuthenticationController {
     }
 
     private boolean passwordIsValid(String password) {
-        return !password.equals("pw");
+        return password != null && password.matches("^(?=\\P{Ll}*\\p{Ll})(?=\\P{Lu}*\\p{Lu})(?=\\P{N}*\\p{N})[\\s\\S]{8,}$");
     }
 
     private boolean emailAddressIsValid(String emailAddress) {
