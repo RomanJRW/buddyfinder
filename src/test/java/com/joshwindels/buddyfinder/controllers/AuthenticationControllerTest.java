@@ -25,6 +25,20 @@ public class AuthenticationControllerTest {
     }
 
     @Test
+    public void givenShortUsername_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
+        verify(userRepositoryMock, never()).storeUser("SevenLe", "Pa55word", "test@example.com", "0123456789");
+        assertEquals("invalid username",
+                authenticationController.registerUser("SevenLe", "Pa55word", "test@example.com", "0123456789"));
+    }
+
+    @Test
+    public void givenNoUsername_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
+        verify(userRepositoryMock, never()).storeUser(null, "Pa55word", "test@example.com", "0123456789");
+        assertEquals("invalid username",
+                authenticationController.registerUser(null, "Pa55word", "test@example.com", "0123456789"));
+    }
+
+    @Test
     public void givenShortPassword_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         verify(userRepositoryMock, never()).storeUser("username", "pw", "test@example.com", "0123456789");
         assertEquals("invalid password",
@@ -57,5 +71,19 @@ public class AuthenticationControllerTest {
         verify(userRepositoryMock, never()).storeUser("username", "Pa55word", "@example.com", "0123456789");
         assertEquals("invalid email address",
                 authenticationController.registerUser("username", "Pa55word", "@example.com", "0123456789"));
+    }
+
+    @Test
+    public void givenEmptyTelephoneNumber_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
+        verify(userRepositoryMock, never()).storeUser("username", "Pa55word", "test@example.com", "");
+        assertEquals("invalid telephone number",
+                authenticationController.registerUser("username", "Pa55word", "test@example.com", ""));
+    }
+
+    @Test
+    public void givenCharacterStringTelephoneNumber_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
+        verify(userRepositoryMock, never()).storeUser("username", "Pa55word", "test@example.com", "abcdefghi");
+        assertEquals("invalid telephone number",
+                authenticationController.registerUser("username", "Pa55word", "test@example.com", "abcdefghi"));
     }
 }

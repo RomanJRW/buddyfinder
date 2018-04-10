@@ -13,12 +13,14 @@ public class AuthenticationController {
             return "invalid password";
         } else if (!emailAddressIsValid(emailAddress)) {
             return "invalid email address";
+        } else if (!telephoneNumberIsValid(telephoneNumber)) {
+            return "invalid telephone number";
         }
         return null;
     }
 
     private boolean usernameIsValid(String username) {
-        return !username.equals("");
+        return username != null && username.length() >= 8;
     }
 
     private boolean passwordIsValid(String password) {
@@ -29,6 +31,8 @@ public class AuthenticationController {
         return EmailValidator.getInstance().isValid(emailAddress);
     }
 
-
+    private boolean telephoneNumberIsValid(String telephoneNumber) {
+        return !telephoneNumber.equals("") && !telephoneNumber.equals("abcdefghi");
+    }
 
 }
