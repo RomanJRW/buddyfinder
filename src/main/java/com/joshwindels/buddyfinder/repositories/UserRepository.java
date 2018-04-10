@@ -10,4 +10,8 @@ public class UserRepository {
     @Autowired
     NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
+    public void storeUser(String username, String password, String emailAddress, String telephoneNumber) {
+
+    }
+
 }
