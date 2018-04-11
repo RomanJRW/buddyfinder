@@ -1,11 +1,18 @@
 package com.joshwindels.buddyfinder.controllers;
 
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.joshwindels.buddyfinder.dtos.UserDTO;
-import org.springframework.stereotype.Controller;
+import com.joshwindels.buddyfinder.repositories.UserRepository;
 import org.apache.commons.validator.routines.EmailValidator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 @Controller
 public class AuthenticationController {
+
+    @Autowired
+    UserRepository userRepository;
 
     public String registerUser(UserDTO userDTO) {
         if (!usernameIsValid(userDTO.getUsername())) {
@@ -17,6 +24,11 @@ public class AuthenticationController {
         } else if (!telephoneNumberIsValid(userDTO.getTelephoneNumber())) {
             return "invalid telephone number";
         }
+
+        if (!userRepository.userNameIsAvailable(userDTO.getUsername())) {
+            return "username unavailable";
+        }
+
         return null;
     }
 
@@ -33,8 +45,13 @@ public class AuthenticationController {
     }
 
     private boolean telephoneNumberIsValid(String telephoneNumber) {
-        return telephoneNumber != null
-                && (!telephoneNumber.equals("") && !telephoneNumber.equals("abcdefghi"));
+        PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+        try {
+            return telephoneNumber != null &&
+                    phoneUtil.isPossibleNumber(phoneUtil.parse(telephoneNumber, "GB"));
+        } catch (NumberParseException e) {
+            return false;
+        }
     }
 
 }

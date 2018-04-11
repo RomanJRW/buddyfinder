@@ -15,4 +15,8 @@ public class UserRepository {
 
     }
 
+    public boolean userNameIsAvailable(String username) {
+
+        return true;
+    }
 }
