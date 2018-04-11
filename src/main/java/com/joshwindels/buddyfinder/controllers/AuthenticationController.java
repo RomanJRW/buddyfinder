@@ -1,19 +1,20 @@
 package com.joshwindels.buddyfinder.controllers;
 
+import com.joshwindels.buddyfinder.dtos.UserDTO;
 import org.springframework.stereotype.Controller;
 import org.apache.commons.validator.routines.EmailValidator;
 
 @Controller
 public class AuthenticationController {
 
-    public String registerUser(String username, String password, String emailAddress, String telephoneNumber) {
-        if (!usernameIsValid(username)) {
+    public String registerUser(UserDTO userDTO) {
+        if (!usernameIsValid(userDTO.getUsername())) {
             return "invalid username";
-        } else if (!passwordIsValid(password)) {
+        } else if (!passwordIsValid(userDTO.getPassword())) {
             return "invalid password";
-        } else if (!emailAddressIsValid(emailAddress)) {
+        } else if (!emailAddressIsValid(userDTO.getEmailAddress())) {
             return "invalid email address";
-        } else if (!telephoneNumberIsValid(telephoneNumber)) {
+        } else if (!telephoneNumberIsValid(userDTO.getTelephoneNumber())) {
             return "invalid telephone number";
         }
         return null;
@@ -32,7 +33,8 @@ public class AuthenticationController {
     }
 
     private boolean telephoneNumberIsValid(String telephoneNumber) {
-        return !telephoneNumber.equals("") && !telephoneNumber.equals("abcdefghi");
+        return telephoneNumber != null
+                && (!telephoneNumber.equals("") && !telephoneNumber.equals("abcdefghi"));
     }
 
 }
