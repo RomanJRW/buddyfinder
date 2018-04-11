@@ -61,6 +61,11 @@
             <artifactId>libphonenumber</artifactId>
             <version>4.3</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.amdelamar</groupId>
+            <artifactId>jhash</artifactId>
+            <version>v1.1.0</version>
+        </dependency>
     </dependencies>
 
 	<build>

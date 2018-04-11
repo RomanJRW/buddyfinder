@@ -1,7 +1,13 @@
 package com.joshwindels.buddyfinder.controllers;
 
+import java.security.NoSuchAlgorithmException;
+import java.util.Optional;
+
+import com.amdelamar.jhash.Hash;
+import com.amdelamar.jhash.exception.BadOperationException;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.joshwindels.buddyfinder.dos.UserDO;
 import com.joshwindels.buddyfinder.dtos.UserDTO;
 import com.joshwindels.buddyfinder.repositories.UserRepository;
 import org.apache.commons.validator.routines.EmailValidator;
@@ -15,21 +21,46 @@ public class AuthenticationController {
     UserRepository userRepository;
 
     public String registerUser(UserDTO userDTO) {
+        Optional<String> validationErrorMessage = getValidationErrorMessage(userDTO);
+        if (validationErrorMessage.isPresent()) {
+            return validationErrorMessage.get();
+        } else {
+            UserDO userDO = new UserDO();
+            userDO.setUsername(userDTO.getUsername());
+
+            String encryptedPassword;
+            try {
+                encryptedPassword = Hash.create(userDTO.getPassword());
+            } catch (BadOperationException | NoSuchAlgorithmException ex) {
+                throw new RuntimeException("There was a problem creating account");
+            }
+
+            userDO.setPassword(encryptedPassword);
+            userDO.setEmailAddress(userDTO.getEmailAddress());
+            userDO.setTelephoneNumber(userDTO.getTelephoneNumber());
+            userRepository.storeUser(userDO);
+            return "registration successful";
+        }
+    }
+
+
+
+    private Optional<String> getValidationErrorMessage(UserDTO userDTO) {
         if (!usernameIsValid(userDTO.getUsername())) {
-            return "invalid username";
+            return Optional.of("invalid username");
         } else if (!passwordIsValid(userDTO.getPassword())) {
-            return "invalid password";
+            return Optional.of("invalid password");
         } else if (!emailAddressIsValid(userDTO.getEmailAddress())) {
-            return "invalid email address";
+            return Optional.of("invalid email address");
         } else if (!telephoneNumberIsValid(userDTO.getTelephoneNumber())) {
-            return "invalid telephone number";
+            return Optional.of("invalid telephone number");
         }
 
         if (!userRepository.userNameIsAvailable(userDTO.getUsername())) {
-            return "username unavailable";
+            return Optional.of("username unavailable");
         }
 
-        return null;
+        return Optional.empty();
     }
 
     private boolean usernameIsValid(String username) {

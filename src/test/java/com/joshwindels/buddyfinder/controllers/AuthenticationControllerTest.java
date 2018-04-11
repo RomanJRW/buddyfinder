@@ -1,8 +1,10 @@
 package com.joshwindels.buddyfinder.controllers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -11,6 +13,8 @@ import com.joshwindels.buddyfinder.dtos.UserDTO;
 import com.joshwindels.buddyfinder.repositories.UserRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -23,6 +27,9 @@ public class AuthenticationControllerTest {
 
     @InjectMocks
     AuthenticationController authenticationController;
+
+    @Captor
+    private ArgumentCaptor<UserDO> userDOCaptor;
 
     @Test
     public void givenBlankUsername_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
@@ -160,6 +167,21 @@ public class AuthenticationControllerTest {
 
         verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
         assertEquals("username unavailable", authenticationController.registerUser(userDTO));
+    }
+
+    @Test
+    public void givenValidRegistrationDetails_whenRegisteringNewUser_thenDetailsStoredAndSuccessMessageReturned() {
+        when(userRepositoryMock.userNameIsAvailable("username")).thenReturn(true);
+
+        UserDTO userDTO = makeUserDto("username", "Pa55word", "test@example.com", "01234 567890");
+
+        assertEquals("registration successful", authenticationController.registerUser(userDTO));
+        verify(userRepositoryMock, times(1)).storeUser(userDOCaptor.capture());
+        UserDO storedDO = userDOCaptor.getValue();
+        assertEquals(storedDO.getUsername(), userDTO.getUsername());
+        assertNotEquals(storedDO.getPassword(), userDTO.getPassword());
+        assertEquals(storedDO.getEmailAddress(), userDTO.getEmailAddress());
+        assertEquals(storedDO.getTelephoneNumber(), userDTO.getTelephoneNumber());
     }
 
     private UserDTO makeUserDto(String username, String password, String emailAddress, String telephoneNumber) {
