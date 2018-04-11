@@ -184,6 +184,21 @@ public class AuthenticationControllerTest {
         assertEquals(storedDO.getTelephoneNumber(), userDTO.getTelephoneNumber());
     }
 
+    @Test
+    public void givenValidRegistrationDetailsWithFullTelephoneNo_whenRegisteringNewUser_thenDetailsStoredAndSuccessMessageReturned() {
+        when(userRepositoryMock.userNameIsAvailable("USERNAME")).thenReturn(true);
+
+        UserDTO userDTO = makeUserDto("USERNAME", "Pa55word", "test@example.com", "+441234 567890");
+
+        assertEquals("registration successful", authenticationController.registerUser(userDTO));
+        verify(userRepositoryMock, times(1)).storeUser(userDOCaptor.capture());
+        UserDO storedDO = userDOCaptor.getValue();
+        assertEquals(storedDO.getUsername(), userDTO.getUsername());
+        assertNotEquals(storedDO.getPassword(), userDTO.getPassword());
+        assertEquals(storedDO.getEmailAddress(), userDTO.getEmailAddress());
+        assertEquals(storedDO.getTelephoneNumber(), userDTO.getTelephoneNumber());
+    }
+
     private UserDTO makeUserDto(String username, String password, String emailAddress, String telephoneNumber) {
         UserDTO userDTO = new UserDTO();
         userDTO.setUsername(username);

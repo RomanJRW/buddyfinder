@@ -25,25 +25,31 @@ public class AuthenticationController {
         if (validationErrorMessage.isPresent()) {
             return validationErrorMessage.get();
         } else {
-            UserDO userDO = new UserDO();
-            userDO.setUsername(userDTO.getUsername());
-
-            String encryptedPassword;
-            try {
-                encryptedPassword = Hash.create(userDTO.getPassword());
-            } catch (BadOperationException | NoSuchAlgorithmException ex) {
-                throw new RuntimeException("There was a problem creating account");
-            }
-
-            userDO.setPassword(encryptedPassword);
-            userDO.setEmailAddress(userDTO.getEmailAddress());
-            userDO.setTelephoneNumber(userDTO.getTelephoneNumber());
+            UserDO userDO = convertToUserDO(userDTO);
             userRepository.storeUser(userDO);
             return "registration successful";
         }
     }
 
+    private UserDO convertToUserDO(UserDTO userDTO) {
+        UserDO userDO = new UserDO();
+        userDO.setUsername(userDTO.getUsername());
+        String encryptedPassword = getEncryptedPassword(userDTO.getPassword());
+        userDO.setPassword(encryptedPassword);
+        userDO.setEmailAddress(userDTO.getEmailAddress());
+        userDO.setTelephoneNumber(userDTO.getTelephoneNumber());
+        return userDO;
+    }
 
+    private String getEncryptedPassword(String password) {
+        String encryptedPassword;
+        try {
+            encryptedPassword = Hash.create(password);
+        } catch (BadOperationException | NoSuchAlgorithmException ex) {
+            throw new RuntimeException("There was a problem creating account");
+        }
+        return encryptedPassword;
+    }
 
     private Optional<String> getValidationErrorMessage(UserDTO userDTO) {
         if (!usernameIsValid(userDTO.getUsername())) {
