@@ -24,4 +24,14 @@ public class UserRepository {
 
         return null;
     }
+
+    public Integer getUserIdForUsername(String username) {
+
+        return null;
+    }
+
+    public String updateUserDetails(String username, String emailAddress, String telephoneNumber) {
+
+        return null;
+    }
 }

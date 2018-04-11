@@ -8,6 +8,7 @@ import com.amdelamar.jhash.exception.BadOperationException;
 import com.amdelamar.jhash.exception.InvalidHashException;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.joshwindels.buddyfinder.dos.CurrentUser;
 import com.joshwindels.buddyfinder.dos.UserDO;
 import com.joshwindels.buddyfinder.dtos.UserDTO;
 import com.joshwindels.buddyfinder.repositories.UserRepository;
@@ -20,6 +21,9 @@ public class AuthenticationController {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    CurrentUser currentUser;
 
     public String registerUser(UserDTO userDTO) {
         Optional<String> validationErrorMessage = getValidationErrorMessage(userDTO);
@@ -37,10 +41,16 @@ public class AuthenticationController {
         if (storedPassword == null) {
             return "username not found";
         } else if (isValidAuthenticationDetails(password, storedPassword)) {
+            currentUser.setUserId(userRepository.getUserIdForUsername(username));
             return "authentication successful";
         } else {
             return "incorrect password";
         }
+    }
+
+    public String updateUserDetails(String username, String emailAddress, String telephoneNumber) {
+        userRepository.updateUserDetails(username, emailAddress, telephoneNumber);
+        return "account updated successfully";
     }
 
     private UserDO convertToUserDO(UserDTO userDTO) {
