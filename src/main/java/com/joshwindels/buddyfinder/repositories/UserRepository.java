@@ -19,4 +19,9 @@ public class UserRepository {
 
         return true;
     }
+
+    public String getStoredPasswordForUser(String username) {
+
+        return null;
+    }
 }

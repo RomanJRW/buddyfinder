@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import com.amdelamar.jhash.Hash;
 import com.amdelamar.jhash.exception.BadOperationException;
+import com.amdelamar.jhash.exception.InvalidHashException;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.joshwindels.buddyfinder.dos.UserDO;
@@ -31,6 +32,17 @@ public class AuthenticationController {
         }
     }
 
+    public String authenticateUser(String username, String password) {
+        String storedPassword = userRepository.getStoredPasswordForUser(username);
+        if (storedPassword == null) {
+            return "username not found";
+        } else if (isValidAuthenticationDetails(password, storedPassword)) {
+            return "authentication successful";
+        } else {
+            return "incorrect password";
+        }
+    }
+
     private UserDO convertToUserDO(UserDTO userDTO) {
         UserDO userDO = new UserDO();
         userDO.setUsername(userDTO.getUsername());
@@ -42,13 +54,19 @@ public class AuthenticationController {
     }
 
     private String getEncryptedPassword(String password) {
-        String encryptedPassword;
         try {
-            encryptedPassword = Hash.create(password);
+            return Hash.create(password);
         } catch (BadOperationException | NoSuchAlgorithmException ex) {
             throw new RuntimeException("There was a problem creating account");
         }
-        return encryptedPassword;
+    }
+
+    private boolean isValidAuthenticationDetails(String password, String storedPassword) {
+        try {
+            return Hash.verify(password, storedPassword);
+        } catch (NoSuchAlgorithmException | InvalidHashException | BadOperationException e) {
+            throw new RuntimeException("There was a problem authenticating account");
+        }
     }
 
     private Optional<String> getValidationErrorMessage(UserDTO userDTO) {
