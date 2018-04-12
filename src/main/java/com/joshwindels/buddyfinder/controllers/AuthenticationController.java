@@ -15,6 +15,8 @@ import com.joshwindels.buddyfinder.repositories.UserRepository;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class AuthenticationController {
@@ -25,7 +27,8 @@ public class AuthenticationController {
     @Autowired
     CurrentUser currentUser;
 
-    public String registerUser(UserDTO userDTO) {
+    @PostMapping("/users/create")
+    public @ResponseBody String registerUser(UserDTO userDTO) {
         Optional<String> validationErrorMessage = getValidationErrorMessage(userDTO);
         if (validationErrorMessage.isPresent()) {
             return validationErrorMessage.get();
@@ -36,19 +39,8 @@ public class AuthenticationController {
         }
     }
 
-    public String authenticateUser(UserDTO userDTO) {
-        String storedPassword = userRepository.getStoredPasswordForUser(userDTO.getUsername());
-        if (storedPassword == null) {
-            return "username not found";
-        } else if (isValidAuthenticationDetails(userDTO.getPassword(), storedPassword)) {
-            currentUser.setUsername(userDTO.getUsername());
-            return "authentication successful";
-        } else {
-            return "incorrect password";
-        }
-    }
-
-    public String updateUserDetails(UserDTO userDTO) {
+    @PostMapping("/users/edit")
+    public @ResponseBody String updateUserDetails(UserDTO userDTO) {
         if (currentUser.getUsername() == null || !currentUser.getUsername().equals(userDTO.getUsername())) {
             return "not authenticated";
         }
@@ -62,7 +54,21 @@ public class AuthenticationController {
         }
     }
 
-    public String deuathenticateUser(String username) {
+    @PostMapping("/users/auth")
+    public @ResponseBody String authenticateUser(UserDTO userDTO) {
+        String storedPassword = userRepository.getStoredPasswordForUser(userDTO.getUsername());
+        if (storedPassword == null) {
+            return "username not found";
+        } else if (isValidAuthenticationDetails(userDTO.getPassword(), storedPassword)) {
+            currentUser.setUsername(userDTO.getUsername());
+            return "authentication successful";
+        } else {
+            return "incorrect password";
+        }
+    }
+
+    @PostMapping("/users/deauth")
+    public @ResponseBody String deuathenticateUser(String username) {
         if (currentUser.getUsername() == null || !currentUser.getUsername().equals(username)) {
             return "not authenticated";
         } else {
