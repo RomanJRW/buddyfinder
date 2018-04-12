@@ -71,6 +71,24 @@ public class AuthenticationController {
         }
     }
 
+    private Optional<String> getValidationErrorMessage(UserDTO userDTO) {
+        if (!usernameIsValid(userDTO.getUsername())) {
+            return Optional.of("invalid username");
+        } else if (!passwordIsValid(userDTO.getPassword())) {
+            return Optional.of("invalid password");
+        } else if (!emailAddressIsValid(userDTO.getEmailAddress())) {
+            return Optional.of("invalid email address");
+        } else if (!telephoneNumberIsValid(userDTO.getTelephoneNumber())) {
+            return Optional.of("invalid telephone number");
+        }
+
+        if (!userRepository.userNameIsAvailable(userDTO.getUsername())) {
+            return Optional.of("username unavailable");
+        }
+
+        return Optional.empty();
+    }
+
     private UserDO convertToUserDO(UserDTO userDTO) {
         UserDO userDO = new UserDO();
         userDO.setUsername(userDTO.getUsername());
@@ -97,24 +115,6 @@ public class AuthenticationController {
         } catch (NoSuchAlgorithmException | InvalidHashException | BadOperationException e) {
             throw new RuntimeException("There was a problem authenticating account");
         }
-    }
-
-    private Optional<String> getValidationErrorMessage(UserDTO userDTO) {
-        if (!usernameIsValid(userDTO.getUsername())) {
-            return Optional.of("invalid username");
-        } else if (!passwordIsValid(userDTO.getPassword())) {
-            return Optional.of("invalid password");
-        } else if (!emailAddressIsValid(userDTO.getEmailAddress())) {
-            return Optional.of("invalid email address");
-        } else if (!telephoneNumberIsValid(userDTO.getTelephoneNumber())) {
-            return Optional.of("invalid telephone number");
-        }
-
-        if (!userRepository.userNameIsAvailable(userDTO.getUsername())) {
-            return Optional.of("username unavailable");
-        }
-
-        return Optional.empty();
     }
 
     private boolean usernameIsValid(String username) {
