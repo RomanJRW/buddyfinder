@@ -36,28 +36,34 @@ public class AuthenticationController {
         }
     }
 
-    public String authenticateUser(String username, String password) {
-        String storedPassword = userRepository.getStoredPasswordForUser(username);
+    public String authenticateUser(UserDTO userDTO) {
+        String storedPassword = userRepository.getStoredPasswordForUser(userDTO.getUsername());
         if (storedPassword == null) {
             return "username not found";
-        } else if (isValidAuthenticationDetails(password, storedPassword)) {
-            currentUser.setUserId(userRepository.getUserIdForUsername(username));
+        } else if (isValidAuthenticationDetails(userDTO.getPassword(), storedPassword)) {
+            currentUser.setUsername(userDTO.getUsername());
             return "authentication successful";
         } else {
             return "incorrect password";
         }
     }
 
-    public String updateUserDetails(String username, String emailAddress, String telephoneNumber) {
-        userRepository.updateUserDetails(username, emailAddress, telephoneNumber);
-        return "account updated successfully";
+    public String updateUserDetails(UserDTO userDTO) {
+        if (currentUser.getUsername().equals(userDTO.getUsername())) {
+            userRepository.updateUser(convertToUserDO(userDTO));
+            return "account updated successfully";
+        } else {
+            return null;
+        }
     }
 
     private UserDO convertToUserDO(UserDTO userDTO) {
         UserDO userDO = new UserDO();
         userDO.setUsername(userDTO.getUsername());
-        String encryptedPassword = getEncryptedPassword(userDTO.getPassword());
-        userDO.setPassword(encryptedPassword);
+        if (userDTO.getPassword() != null) {
+            String encryptedPassword = getEncryptedPassword(userDTO.getPassword());
+            userDO.setPassword(encryptedPassword);
+        }
         userDO.setEmailAddress(userDTO.getEmailAddress());
         userDO.setTelephoneNumber(userDTO.getTelephoneNumber());
         return userDO;

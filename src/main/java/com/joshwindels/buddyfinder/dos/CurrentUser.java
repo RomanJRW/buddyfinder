@@ -8,13 +8,13 @@ import org.springframework.stereotype.Component;
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class CurrentUser {
 
-    private int userId;
+    private String username;
 
-    public int getUserId() {
-        return userId;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setUsername(String userId) {
+        this.username = userId;
     }
 }

@@ -3,7 +3,6 @@ package com.joshwindels.buddyfinder.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -199,37 +198,53 @@ public class AuthenticationControllerTest {
 
     @Test
     public void givenAuthenticationDetailsForRegisteredUser_whenAuthenticating_thenSuccessMessageIsReturned() {
-        when(userRepositoryMock.getStoredPasswordForUser("username")).thenReturn(ENCRYPTED_PASSWORD);
-        when(userRepositoryMock.getUserIdForUsername("username")).thenReturn(1);
+        UserDTO userDTO = makeUserDto("username", "Pa55word", null, null);
 
-        assertEquals("authentication successful", authenticationController.authenticateUser("username", "Pa55word"));
+        when(userRepositoryMock.getStoredPasswordForUser("username")).thenReturn(ENCRYPTED_PASSWORD);
+
+        assertEquals("authentication successful", authenticationController.authenticateUser(userDTO));
         verify(userRepositoryMock, times(1)).getStoredPasswordForUser(eq("username"));
-        verify(userRepositoryMock, times(1)).getUserIdForUsername("username");
-        verify(currentUserMock, times(1)).setUserId(1);
+        verify(currentUserMock, times(1)).setUsername("username");
     }
 
     @Test
     public void givenAuthenticationDetailsForUnregisteredUser_whenAuthenticating_thenErrorMessageIsReturned() {
+        UserDTO userDTO = makeUserDto("username", "Pa55word", null, null);
+
         when(userRepositoryMock.getStoredPasswordForUser("username")).thenReturn(null);
 
-        assertEquals("username not found", authenticationController.authenticateUser("username", "Pa55word"));
+        assertEquals("username not found", authenticationController.authenticateUser(userDTO));
         verify(userRepositoryMock, times(1)).getStoredPasswordForUser(eq("username"));
-        verify(currentUserMock, times(0)).setUserId(anyInt());
+        verify(currentUserMock, times(0)).setUsername("username");
     }
 
     @Test
     public void givenIncorrectAuthenticationDetailsForRegisteredUser_whenAuthenticating_thenErrorMessageIsReturned() {
+        UserDTO userDTO = makeUserDto("username", "1ncorrectPa55word", null, null);
+
         when(userRepositoryMock.getStoredPasswordForUser("username")).thenReturn(ENCRYPTED_PASSWORD);
 
-        assertEquals("incorrect password", authenticationController.authenticateUser("username", "1ncorrectPa55word"));
+        assertEquals("incorrect password", authenticationController.authenticateUser(userDTO));
         verify(userRepositoryMock, times(1)).getStoredPasswordForUser(eq("username"));
-        verify(currentUserMock, times(0)).setUserId(anyInt());
+        verify(currentUserMock, times(0)).setUsername("username");
     }
 
     @Test
     public void givenAuthenticatedUser_whenUpdatingEmailAddAndTelNo_thenStoredAndSuccessMessageIsReturned() {
-        assertEquals("account updated successfully", authenticationController.updateUserDetails("username", "newtest@example.com", "+449876 543210"));
-        verify(userRepositoryMock, times(1)).updateUserDetails("username", "newtest@example.com", "+449876 543210");
+        when(currentUserMock.getUsername()).thenReturn("username");
+        UserDTO userDTO = makeUserDto("username", null, "newtest@example.com", "+449876 543210");
+
+        assertEquals("account updated successfully", authenticationController.updateUserDetails(userDTO));
+        verifyDtoUpdatedvalues(userDTO);
+    }
+
+    @Test
+    public void givenAuthenticatedUser_whenUpdatingEmailAdd_thenStoredAndSuccessMessageIsReturned() {
+        when(currentUserMock.getUsername()).thenReturn("username");
+        UserDTO userDTO = makeUserDto("username", null, "newtest@example.com", null);
+
+        assertEquals("account updated successfully", authenticationController.updateUserDetails(userDTO));
+        verifyDtoUpdatedvalues(userDTO);
     }
 
     private void verifyDtoStoredvalues(UserDTO userDTO) {
@@ -237,6 +252,14 @@ public class AuthenticationControllerTest {
         UserDO storedDO = userDOCaptor.getValue();
         assertEquals(storedDO.getUsername(), userDTO.getUsername());
         assertNotEquals(storedDO.getPassword(), userDTO.getPassword());
+        assertEquals(storedDO.getEmailAddress(), userDTO.getEmailAddress());
+        assertEquals(storedDO.getTelephoneNumber(), userDTO.getTelephoneNumber());
+    }
+
+    private void verifyDtoUpdatedvalues(UserDTO userDTO) {
+        verify(userRepositoryMock, times(1)).updateUser(userDOCaptor.capture());
+        UserDO storedDO = userDOCaptor.getValue();
+        assertEquals(storedDO.getUsername(), userDTO.getUsername());
         assertEquals(storedDO.getEmailAddress(), userDTO.getEmailAddress());
         assertEquals(storedDO.getTelephoneNumber(), userDTO.getTelephoneNumber());
     }
