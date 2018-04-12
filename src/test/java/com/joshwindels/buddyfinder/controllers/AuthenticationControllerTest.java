@@ -247,6 +247,69 @@ public class AuthenticationControllerTest {
         verifyDtoUpdatedvalues(userDTO);
     }
 
+    @Test
+    public void givenAuthenticatedUser_whenUpdatingWithInvalidEmailAdd_thenNotStoredAndErrorMessageIsReturned() {
+        when(currentUserMock.getUsername()).thenReturn("username");
+        UserDTO userDTO = makeUserDto("username", null, "newtest", null);
+
+        assertEquals("invalid email address", authenticationController.updateUserDetails(userDTO));
+        verify(userRepositoryMock, times(0)).updateUser(any(UserDO.class));
+    }
+
+    @Test
+    public void givenAuthenticatedUser_whenUpdatingWithNoDomainEmailAdd_thenNotStoredAndErrorMessageIsReturned() {
+        when(currentUserMock.getUsername()).thenReturn("username");
+        UserDTO userDTO = makeUserDto("username", null, "newtest@", null);
+
+        assertEquals("invalid email address", authenticationController.updateUserDetails(userDTO));
+        verify(userRepositoryMock, times(0)).updateUser(any(UserDO.class));
+    }
+
+    @Test
+    public void givenAuthenticatedUser_whenUpdatingWithNoTLDEmailAdd_thenNotStoredAndErrorMessageIsReturned() {
+        when(currentUserMock.getUsername()).thenReturn("username");
+        UserDTO userDTO = makeUserDto("username", null, "newtest@example", null);
+
+        assertEquals("invalid email address", authenticationController.updateUserDetails(userDTO));
+        verify(userRepositoryMock, times(0)).updateUser(any(UserDO.class));
+    }
+
+    @Test
+    public void givenAuthenticatedUser_whenUpdatingWithNoFirstPartEmailAdd_thenNotStoredAndErrorMessageIsReturned() {
+        when(currentUserMock.getUsername()).thenReturn("username");
+        UserDTO userDTO = makeUserDto("username", null, "@example.com", null);
+
+        assertEquals("invalid email address", authenticationController.updateUserDetails(userDTO));
+        verify(userRepositoryMock, times(0)).updateUser(any(UserDO.class));
+    }
+
+    @Test
+    public void givenAuthenticatedUser_whenUpdatingTelNo_thenStoredAndSuccessMessageIsReturned() {
+        when(currentUserMock.getUsername()).thenReturn("username");
+        UserDTO userDTO = makeUserDto("username", null, null, "09876 543210");
+
+        assertEquals("account updated successfully", authenticationController.updateUserDetails(userDTO));
+        verifyDtoUpdatedvalues(userDTO);
+    }
+
+    @Test
+    public void givenAuthenticatedUser_whenUpdatingExtendedTelNo_thenStoredAndSuccessMessageIsReturned() {
+        when(currentUserMock.getUsername()).thenReturn("username");
+        UserDTO userDTO = makeUserDto("username", null, null, "+449876 543210");
+
+        assertEquals("account updated successfully", authenticationController.updateUserDetails(userDTO));
+        verifyDtoUpdatedvalues(userDTO);
+    }
+
+    @Test
+    public void givenAuthenticatedUser_whenUpdatingWithInvalidTelNo_thenNotStoredAndErrorMessageIsReturned() {
+        when(currentUserMock.getUsername()).thenReturn("username");
+        UserDTO userDTO = makeUserDto("username", null, null, "asdfgh");
+
+        assertEquals("invalid telephone number", authenticationController.updateUserDetails(userDTO));
+        verify(userRepositoryMock, times(0)).updateUser(any(UserDO.class));
+    }
+
     private void verifyDtoStoredvalues(UserDTO userDTO) {
         verify(userRepositoryMock, times(1)).storeUser(userDOCaptor.capture());
         UserDO storedDO = userDOCaptor.getValue();

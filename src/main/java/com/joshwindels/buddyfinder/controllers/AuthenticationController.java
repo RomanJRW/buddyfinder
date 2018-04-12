@@ -49,11 +49,16 @@ public class AuthenticationController {
     }
 
     public String updateUserDetails(UserDTO userDTO) {
-        if (currentUser.getUsername().equals(userDTO.getUsername())) {
+        if (!currentUser.getUsername().equals(userDTO.getUsername())) {
+            return null;
+        }
+        if (userDTO.getEmailAddress() != null && !emailAddressIsValid(userDTO.getEmailAddress())) {
+            return "invalid email address";
+        } else if (userDTO.getTelephoneNumber() != null && !telephoneNumberIsValid(userDTO.getTelephoneNumber())) {
+            return "invalid telephone number";
+        } else {
             userRepository.updateUser(convertToUserDO(userDTO));
             return "account updated successfully";
-        } else {
-            return null;
         }
     }
 
