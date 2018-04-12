@@ -49,8 +49,8 @@ public class AuthenticationController {
     }
 
     public String updateUserDetails(UserDTO userDTO) {
-        if (!currentUser.getUsername().equals(userDTO.getUsername())) {
-            return null;
+        if (currentUser.getUsername() == null || !currentUser.getUsername().equals(userDTO.getUsername())) {
+            return "not authenticated";
         }
         if (userDTO.getEmailAddress() != null && !emailAddressIsValid(userDTO.getEmailAddress())) {
             return "invalid email address";
@@ -59,6 +59,15 @@ public class AuthenticationController {
         } else {
             userRepository.updateUser(convertToUserDO(userDTO));
             return "account updated successfully";
+        }
+    }
+
+    public String deuathenticateUser(String username) {
+        if (currentUser.getUsername() == null || !currentUser.getUsername().equals(username)) {
+            return "not authenticated";
+        } else {
+            currentUser.setUsername(null);
+            return "deauthenticated";
         }
     }
 
@@ -129,5 +138,4 @@ public class AuthenticationController {
             return false;
         }
     }
-
 }

@@ -310,6 +310,49 @@ public class AuthenticationControllerTest {
         verify(userRepositoryMock, times(0)).updateUser(any(UserDO.class));
     }
 
+    @Test
+    public void givenUnauthenticatedUser_whenUpdatingEmailAddAndTelNo_thenNotStoredAndErrorMessageIsReturned() {
+        when(currentUserMock.getUsername()).thenReturn(null);
+        UserDTO userDTO = makeUserDto("username", null, "newtest@example.com", "+449876 543210");
+
+        assertEquals("not authenticated", authenticationController.updateUserDetails(userDTO));
+        verify(userRepositoryMock, times(0)).updateUser(any(UserDO.class));
+    }
+
+    @Test
+    public void givenUnauthenticatedUser_whenUpdatingEmailAdd_thenNotStoredAndErrorMessageIsReturned() {
+        when(currentUserMock.getUsername()).thenReturn(null);
+        UserDTO userDTO = makeUserDto("username", null, "newtest@example.com", null);
+
+        assertEquals("not authenticated", authenticationController.updateUserDetails(userDTO));
+        verify(userRepositoryMock, times(0)).updateUser(any(UserDO.class));
+    }
+
+    @Test
+    public void givenUnauthenticatedUser_whenUpdatingTelNo_thenNotStoredAndErrorMessageIsReturned() {
+        when(currentUserMock.getUsername()).thenReturn(null);
+        UserDTO userDTO = makeUserDto("username", null, null, "+449876 543210");
+
+        assertEquals("not authenticated", authenticationController.updateUserDetails(userDTO));
+        verify(userRepositoryMock, times(0)).updateUser(any(UserDO.class));
+    }
+
+    @Test
+    public void givenAuthenticatedUser_whenDeauthenticating_userIsDeauthenticatedAndSuccessMessageIsReturned() {
+        when(currentUserMock.getUsername()).thenReturn("username");
+
+        assertEquals("deauthenticated", authenticationController.deuathenticateUser("username"));
+        verify(currentUserMock, times(1)).setUsername(null);
+    }
+
+    @Test
+    public void givenUnauthenticatedUser_whenDeauthenticating_errorMessageIsReturned() {
+        when(currentUserMock.getUsername()).thenReturn(null);
+
+        assertEquals("not authenticated", authenticationController.deuathenticateUser("username"));
+        verify(currentUserMock, times(0)).setUsername(null);
+    }
+
     private void verifyDtoStoredvalues(UserDTO userDTO) {
         verify(userRepositoryMock, times(1)).storeUser(userDOCaptor.capture());
         UserDO storedDO = userDOCaptor.getValue();
