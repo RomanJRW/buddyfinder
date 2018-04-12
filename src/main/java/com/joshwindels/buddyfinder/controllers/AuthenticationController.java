@@ -16,9 +16,11 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
+@RequestMapping("/users")
 public class AuthenticationController {
 
     @Autowired
@@ -27,7 +29,7 @@ public class AuthenticationController {
     @Autowired
     CurrentUser currentUser;
 
-    @PostMapping("/users/create")
+    @PostMapping("/create")
     public @ResponseBody String registerUser(UserDTO userDTO) {
         Optional<String> validationErrorMessage = getValidationErrorMessage(userDTO);
         if (validationErrorMessage.isPresent()) {
@@ -39,7 +41,7 @@ public class AuthenticationController {
         }
     }
 
-    @PostMapping("/users/edit")
+    @PostMapping("/edit")
     public @ResponseBody String updateUserDetails(UserDTO userDTO) {
         if (currentUser.getUsername() == null || !currentUser.getUsername().equals(userDTO.getUsername())) {
             return "not authenticated";
@@ -54,7 +56,7 @@ public class AuthenticationController {
         }
     }
 
-    @PostMapping("/users/auth")
+    @PostMapping("/auth")
     public @ResponseBody String authenticateUser(UserDTO userDTO) {
         String storedPassword = userRepository.getStoredPasswordForUser(userDTO.getUsername());
         if (storedPassword == null) {
@@ -67,7 +69,7 @@ public class AuthenticationController {
         }
     }
 
-    @PostMapping("/users/deauth")
+    @PostMapping("/deauth")
     public @ResponseBody String deuathenticateUser(String username) {
         if (currentUser.getUsername() == null || !currentUser.getUsername().equals(username)) {
             return "not authenticated";

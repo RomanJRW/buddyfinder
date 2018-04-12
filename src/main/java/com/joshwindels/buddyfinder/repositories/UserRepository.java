@@ -20,13 +20,13 @@ public class UserRepository {
         params.addValue("username", userDO.getUsername());
         params.addValue("password", userDO.getPassword());
         params.addValue("emailAddress", userDO.getEmailAddress());
-        params.addValue("telephoneNumer", userDO.getTelephoneNumber());
+        params.addValue("telephoneNumber", userDO.getTelephoneNumber());
 
         namedParameterJdbcTemplate.update(sql, params);
     }
 
     public boolean userNameIsAvailable(String username) {
-        String sql = " SELECT exists(SELECT 1 FROM users WHERE username = :username)";
+        String sql = " SELECT NOT exists(SELECT 1 FROM users WHERE username = :username)";
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("username", username);
@@ -46,8 +46,8 @@ public class UserRepository {
     public void updateUser(UserDO userDO) {
         String sql = "";
         if (userDO.getEmailAddress() != null && userDO.getTelephoneNumber() != null) {
-            sql = "     UPDATE users SET email_address = :emailAddress "
-                    + " AND telephone_no = :telephoneNumber "
+            sql = "     UPDATE users SET email_address = :emailAddress, "
+                    + "     telephone_no = :telephoneNumber "
                     + " WHERE username = :username ";
         } else if (userDO.getEmailAddress() != null) {
             sql = "     UPDATE users SET email_address = :emailAddress "
@@ -60,7 +60,7 @@ public class UserRepository {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("username", userDO.getUsername());
         params.addValue("emailAddress", userDO.getEmailAddress());
-        params.addValue("telephoneNumer", userDO.getTelephoneNumber());
+        params.addValue("telephoneNumber", userDO.getTelephoneNumber());
 
         namedParameterJdbcTemplate.update(sql, params);
     }
