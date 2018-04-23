@@ -25,7 +25,7 @@ public class ExcursionControllerTest {
 
     @Mock
     CurrentUser currentUserMock;
-    
+
     @Mock
     ExcursionRepository excursionRepositoryMock;
 
@@ -192,8 +192,18 @@ public class ExcursionControllerTest {
         verify(excursionRepositoryMock, never()).storeExcursion(any(ExcursionDO.class));
     }
 
+    @Test
+    public void givenAnExistingExcursion_whenUpdatingExcursion_thenExcursionIsStoredAndSuccessMessageReturned() {
+        when(currentUserMock.getUsername()).thenReturn("username");
+        ExcursionDTO excursionDTO = getValidUpdateExcursionDTO();
+
+        assertEquals("excursion updated", excursionController.updateExcursion(excursionDTO));
+        verify(excursionRepositoryMock, times(1)).updateExcursion(any(ExcursionDO.class));
+    }
+
     private ExcursionDTO getValidNewExcursionDTO() {
-        return new ExcursionDTOBuilder().id(1)
+        return new ExcursionDTOBuilder()
+                .id(1)
                 .ownerId(10)
                 .name("new excursion")
                 .startLocation("Belmopan")
@@ -203,6 +213,21 @@ public class ExcursionControllerTest {
                 .estimatedCost(50)
                 .requiredBuddies(2)
                 .description("a road trip between Belmopan and Belize City, stopping off at some temples along the way")
+                .build();
+    }
+
+    private ExcursionDTO getValidUpdateExcursionDTO() {
+        return new ExcursionDTOBuilder()
+                .id(1)
+                .ownerId(10)
+                .name("updated excursion")
+                .startLocation("New Mexico")
+                .endLocation("Guatemala City")
+                .startDate(new Date(2018, 10, 13))
+                .endDate(new Date(2018, 10, 15))
+                .estimatedCost(100)
+                .requiredBuddies(3)
+                .description("An updated description between New Mexico and Guatemala City")
                 .build();
     }
 

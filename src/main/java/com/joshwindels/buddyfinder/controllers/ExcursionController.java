@@ -1,5 +1,7 @@
 package com.joshwindels.buddyfinder.controllers;
 
+import java.util.Optional;
+
 import com.joshwindels.buddyfinder.dos.CurrentUser;
 import com.joshwindels.buddyfinder.dos.ExcursionDO;
 import com.joshwindels.buddyfinder.dtos.ExcursionDTO;
@@ -32,12 +34,30 @@ public class ExcursionController {
             return "all fields must be provided";
         } else if (excursionDTO.getStartDate().after(excursionDTO.getEndDate())) {
             return "end date must be after start date";
-        } else {
-            excursionDTO.setOwnerId(currentUser.getId());
-            ExcursionDO excursionDO = convertToDo(excursionDTO);
-            excursionRepository.storeExcursion(excursionDO);
-            return "excursion created";
         }
+        excursionDTO.setOwnerId(currentUser.getId());
+        ExcursionDO excursionDO = convertToDo(excursionDTO);
+        excursionRepository.storeExcursion(excursionDO);
+        return "excursion created";
+    }
+
+    public String updateExcursion(ExcursionDTO excursionDTO) {
+        if (currentUser.getUsername() == null) {
+            return "not authenticated";
+        } else if (excursionIsValid(excursionDTO)) {
+            return "all fields must be provided";
+        } else if (excursionDTO.getStartDate().after(excursionDTO.getEndDate())) {
+            return "end date must be after start date";
+        }
+        Optional<ExcursionDO> optionalStoredExcursion = excursionRepository.getExcursionForId(excursionDTO.getId());
+        if (!optionalStoredExcursion.isPresent()) {
+            return "excursion does not exist";
+        }
+        ExcursionDO storedExcursion = optionalStoredExcursion.get();
+        if (storedExcursion.getOwnerId() != currentUser.getId()) {
+            return "user does not have permission to update this excursion";
+        }
+        return null;
     }
 
     private boolean excursionIsValid(ExcursionDTO excursionDTO) {
@@ -71,5 +91,4 @@ public class ExcursionController {
         excursionDO.setDescription(excursionDTO.getDescription());
         return excursionDO;
     }
-
 }
