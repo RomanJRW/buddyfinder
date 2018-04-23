@@ -181,6 +181,15 @@ public class ExcursionControllerTest {
         verify(excursionRepositoryMock, never()).storeExcursion(any(ExcursionDO.class));
     }
 
+    @Test
+    public void givenUnauthenticatedUser_whenCreatingExcursion_thenExcursionIsNotStoredAndErrorMessageReturned() {
+        when(currentUserMock.getUsername()).thenReturn(null);
+        ExcursionDTO excursionDTO = getValidNewExcursionDTO();
+
+        assertEquals("not authenticated", excursionController.createExcursion(excursionDTO));
+        verify(excursionRepositoryMock, never()).storeExcursion(any(ExcursionDO.class));
+    }
+
 
     private ExcursionDTO getValidNewExcursionDTO() {
         return new ExcursionDTOBuilder().id(1)
