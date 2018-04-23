@@ -41,6 +41,8 @@ public class ExcursionController {
     private boolean excursionIsValid(ExcursionDTO excursionDTO) {
         if (excursionDTO.getName() == null || excursionDTO.getName().isEmpty()) {
             return false;
+        } else if (excursionDTO.getStartLocation() == null || excursionDTO.getStartLocation().isEmpty()) {
+            return false;
         }
         return true;
     }

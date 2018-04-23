@@ -59,6 +59,26 @@ public class ExcursionControllerTest {
         verify(excursionRepositoryMock, never()).storeExcursion(any(ExcursionDO.class));
     }
 
+    @Test
+    public void givenANewExcursionWithEmptyStartLocation_whenCreatingExcursion_thenExcursionIsNotStoredAndErrorMessageReturned() {
+        when(currentUserMock.getUsername()).thenReturn("username");
+        ExcursionDTO excursionDTO = getValidNewExcursionDTO();
+        excursionDTO.setStartLocation("");
+
+        assertEquals("all fields must be provided", excursionController.createExcursion(excursionDTO));
+        verify(excursionRepositoryMock, never()).storeExcursion(any(ExcursionDO.class));
+    }
+
+    @Test
+    public void givenANewExcursionWithNoLocation_whenCreatingExcursion_thenExcursionIsNotStoredAndErrorMessageReturned() {
+        when(currentUserMock.getUsername()).thenReturn("username");
+        ExcursionDTO excursionDTO = getValidNewExcursionDTO();
+        excursionDTO.setStartLocation(null);
+
+        assertEquals("all fields must be provided", excursionController.createExcursion(excursionDTO));
+        verify(excursionRepositoryMock, never()).storeExcursion(any(ExcursionDO.class));
+    }
+
     private ExcursionDTO getValidNewExcursionDTO() {
         return new ExcursionDTOBuilder().id(1)
                 .ownerId(10)
