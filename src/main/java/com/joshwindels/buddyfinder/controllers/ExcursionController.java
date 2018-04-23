@@ -47,6 +47,10 @@ public class ExcursionController {
             return false;
         } else if (excursionDTO.getStartDate() == null || excursionDTO.getEndDate() == null) {
             return false;
+        } else if (excursionDTO.getEstimatedCost() < 0 || excursionDTO.getRequiredBuddies() < 1) {
+            return false;
+        } else if (excursionDTO.getDescription() == null || excursionDTO.getDescription().isEmpty()) {
+            return false;
         }
         return true;
     }

@@ -119,6 +119,59 @@ public class ExcursionControllerTest {
         verify(excursionRepositoryMock, never()).storeExcursion(any(ExcursionDO.class));
     }
 
+    @Test
+    public void givenANewExcursionWithNegativeEstimatedCost_whenCreatingExcursion_thenExcursionIsNotStoredAndErrorMessageReturned() {
+        when(currentUserMock.getUsername()).thenReturn("username");
+        ExcursionDTO excursionDTO = getValidNewExcursionDTO();
+        excursionDTO.setEstimatedCost(-1);
+
+        assertEquals("all fields must be provided", excursionController.createExcursion(excursionDTO));
+        verify(excursionRepositoryMock, never()).storeExcursion(any(ExcursionDO.class));
+    }
+
+    @Test
+    public void givenANewExcursionWithNoRequiredBuddies_whenCreatingExcursion_thenExcursionIsNotStoredAndErrorMessageReturned() {
+        when(currentUserMock.getUsername()).thenReturn("username");
+        ExcursionDTO excursionDTO = getValidNewExcursionDTO();
+        excursionDTO.setRequiredBuddies(0);
+
+        assertEquals("all fields must be provided", excursionController.createExcursion(excursionDTO));
+        verify(excursionRepositoryMock, never()).storeExcursion(any(ExcursionDO.class));
+    }
+
+    @Test
+    public void givenANewExcursionWithEmptyDescription_whenCreatingExcursion_thenExcursionIsNotStoredAndErrorMessageReturned() {
+        when(currentUserMock.getUsername()).thenReturn("username");
+        ExcursionDTO excursionDTO = getValidNewExcursionDTO();
+        excursionDTO.setDescription("");
+
+        assertEquals("all fields must be provided", excursionController.createExcursion(excursionDTO));
+        verify(excursionRepositoryMock, never()).storeExcursion(any(ExcursionDO.class));
+    }
+
+    @Test
+    public void givenANewExcursionWithNoDescription_whenCreatingExcursion_thenExcursionIsNotStoredAndErrorMessageReturned() {
+        when(currentUserMock.getUsername()).thenReturn("username");
+        ExcursionDTO excursionDTO = getValidNewExcursionDTO();
+        excursionDTO.setDescription(null);
+
+        assertEquals("all fields must be provided", excursionController.createExcursion(excursionDTO));
+        verify(excursionRepositoryMock, never()).storeExcursion(any(ExcursionDO.class));
+    }
+
+    @Test
+    public void givenANewExcursionWithMultipleMissingFields_whenCreatingExcursion_thenExcursionIsNotStoredAndErrorMessageReturned() {
+        when(currentUserMock.getUsername()).thenReturn("username");
+        ExcursionDTO excursionDTO = getValidNewExcursionDTO();
+        excursionDTO.setName(null);
+        excursionDTO.setRequiredBuddies(0);
+        excursionDTO.setDescription(null);
+
+        assertEquals("all fields must be provided", excursionController.createExcursion(excursionDTO));
+        verify(excursionRepositoryMock, never()).storeExcursion(any(ExcursionDO.class));
+    }
+
+
     private ExcursionDTO getValidNewExcursionDTO() {
         return new ExcursionDTOBuilder().id(1)
                 .ownerId(10)
