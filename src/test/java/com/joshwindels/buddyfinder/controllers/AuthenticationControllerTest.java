@@ -42,128 +42,128 @@ public class AuthenticationControllerTest {
     public void givenBlankUsername_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto("", "Pa55word", "test@example.com", "01234 567890");
 
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
         assertEquals("invalid username", authenticationController.registerUser(userDTO));
+        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
     }
 
     @Test
     public void givenShortUsername_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto("SevenLe", "Pa55word", "test@example.com", "01234 567890");
 
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
         assertEquals("invalid username", authenticationController.registerUser(userDTO));
+        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
     }
 
     @Test
     public void givenNoUsername_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto(null, "Pa55word", "test@example.com", "01234 567890");
 
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
         assertEquals("invalid username", authenticationController.registerUser(userDTO));
+        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
     }
 
     @Test
     public void givenShortPassword_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto("username", "pw", "test@example.com", "01234 567890");
 
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
         assertEquals("invalid password", authenticationController.registerUser(userDTO));
+        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
     }
 
     @Test
     public void givenNoUpperPassword_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto("username", "pa55word", "test@example.com", "01234 567890");
 
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
         assertEquals("invalid password", authenticationController.registerUser(userDTO));
+        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
     }
 
     @Test
     public void givenNoLowerCasePassword_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto("username", "PA55WORD", "test@example.com", "01234 567890");
 
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
         assertEquals("invalid password", authenticationController.registerUser(userDTO));
+        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
     }
 
     @Test
     public void givenNoNumberPassword_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto("username", "Password", "test@example.com", "01234 567890");
 
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
         assertEquals("invalid password", authenticationController.registerUser(userDTO));
+        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
     }
 
     @Test
     public void givenNoPassword_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto("username", null, "test@example.com", "01234 567890");
 
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
         assertEquals("invalid password", authenticationController.registerUser(userDTO));
+        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
     }
 
     @Test
     public void givenSimpleStringEmailAddress_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto("username", "Pa55word", "test", "01234 567890");
 
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
         assertEquals("invalid email address", authenticationController.registerUser(userDTO));
+        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
     }
 
     @Test
     public void givenNoDomainEmailAddress_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto("username", "Pa55word", "test@", "01234 567890");
 
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
         assertEquals("invalid email address", authenticationController.registerUser(userDTO));
+        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
     }
 
     @Test
     public void givenNoTLDEmailAddress_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto("username", "Pa55word", "test@example", "01234 567890");
 
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
         assertEquals("invalid email address", authenticationController.registerUser(userDTO));
+        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
     }
 
     @Test
     public void givenNoLocalPartEmailAddress_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto("username", "Pa55word", "@example.com", "01234 567890");
 
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
         assertEquals("invalid email address", authenticationController.registerUser(userDTO));
+        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
     }
 
     @Test
     public void givenNoEmailAddress_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto("username", "Pa55word", null, "01234 567890");
 
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
         assertEquals("invalid email address", authenticationController.registerUser(userDTO));
+        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
     }
 
     @Test
     public void givenEmptyTelephoneNumber_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto("username", "Pa55word", "test@example.com", "");
 
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
         assertEquals("invalid telephone number", authenticationController.registerUser(userDTO));
+        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
     }
 
     @Test
     public void givenCharacterStringTelephoneNumber_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto("username", "Pa55word", "test@example.com", "abcdefghi");
 
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
         assertEquals("invalid telephone number", authenticationController.registerUser(userDTO));
+        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
     }
 
     @Test
     public void givenNoTelephoneNumber_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto("username", "Pa55word", "test@example.com", null);
 
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
         assertEquals("invalid telephone number", authenticationController.registerUser(userDTO));
+        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
     }
 
     @Test
@@ -172,8 +172,8 @@ public class AuthenticationControllerTest {
 
         UserDTO userDTO = makeUserDto("alreadyTaken", "Pa55word", "test@example.com", "01234 567890");
 
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
         assertEquals("username unavailable", authenticationController.registerUser(userDTO));
+        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
     }
 
     @Test
