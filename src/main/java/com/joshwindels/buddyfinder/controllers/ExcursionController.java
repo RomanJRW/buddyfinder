@@ -28,11 +28,21 @@ public class ExcursionController {
     public @ResponseBody String createExcursion(ExcursionDTO excursionDTO) {
         if (currentUser.getUsername() == null) {
             return "not authenticated";
+        } else if (!excursionIsValid(excursionDTO)) {
+            return "all fields must be provided";
         } else {
+            excursionDTO.setOwnerId(currentUser.getId());
             ExcursionDO excursionDO = convertToDo(excursionDTO);
             excursionRepository.storeExcursion(excursionDO);
             return "excursion created";
         }
+    }
+
+    private boolean excursionIsValid(ExcursionDTO excursionDTO) {
+        if (excursionDTO.getName() == null || excursionDTO.getName().isEmpty()) {
+            return false;
+        }
+        return true;
     }
 
     private ExcursionDO convertToDo(ExcursionDTO excursionDTO) {

@@ -91,11 +91,9 @@ public class AuthenticationController {
         } else if (!telephoneNumberIsValid(userDTO.getTelephoneNumber())) {
             return Optional.of("invalid telephone number");
         }
-
         if (!userRepository.userNameIsAvailable(userDTO.getUsername())) {
             return Optional.of("username unavailable");
         }
-
         return Optional.empty();
     }
 
