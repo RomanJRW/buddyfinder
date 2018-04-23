@@ -43,6 +43,8 @@ public class ExcursionController {
             return false;
         } else if (excursionDTO.getStartLocation() == null || excursionDTO.getStartLocation().isEmpty()) {
             return false;
+        } else if (excursionDTO.getEndLocation() == null || excursionDTO.getEndLocation().isEmpty()) {
+            return false;
         }
         return true;
     }
