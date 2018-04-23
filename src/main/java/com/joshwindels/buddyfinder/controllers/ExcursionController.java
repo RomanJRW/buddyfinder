@@ -30,6 +30,8 @@ public class ExcursionController {
             return "not authenticated";
         } else if (!excursionIsValid(excursionDTO)) {
             return "all fields must be provided";
+        } else if (excursionDTO.getStartDate().after(excursionDTO.getEndDate())) {
+            return "end date must be after start date";
         } else {
             excursionDTO.setOwnerId(currentUser.getId());
             ExcursionDO excursionDO = convertToDo(excursionDTO);

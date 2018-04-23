@@ -171,6 +171,16 @@ public class ExcursionControllerTest {
         verify(excursionRepositoryMock, never()).storeExcursion(any(ExcursionDO.class));
     }
 
+    @Test
+    public void givenANewExcursionWithEndDateBeforeStartDate_whenCreatingExcursion_thenExcursionIsNotStoredAndErrorMessageReturned() {
+        when(currentUserMock.getUsername()).thenReturn("username");
+        ExcursionDTO excursionDTO = getValidNewExcursionDTO();
+        excursionDTO.setEndDate(new Date(2017, 6, 6));
+
+        assertEquals("end date must be after start date", excursionController.createExcursion(excursionDTO));
+        verify(excursionRepositoryMock, never()).storeExcursion(any(ExcursionDO.class));
+    }
+
 
     private ExcursionDTO getValidNewExcursionDTO() {
         return new ExcursionDTOBuilder().id(1)
