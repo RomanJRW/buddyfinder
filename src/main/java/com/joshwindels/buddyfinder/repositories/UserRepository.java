@@ -64,4 +64,13 @@ public class UserRepository {
 
         namedParameterJdbcTemplate.update(sql, params);
     }
+
+    public Integer getIfForUsername(String username) {
+        String sql = " SELECT id FROM users where username = :username LIMIT 1 ";
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("username", username);
+
+        return namedParameterJdbcTemplate.queryForObject(sql, params, Integer.class);
+    }
 }

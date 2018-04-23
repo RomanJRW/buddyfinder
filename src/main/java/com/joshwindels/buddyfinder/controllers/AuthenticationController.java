@@ -63,6 +63,7 @@ public class AuthenticationController {
             return "username not found";
         } else if (isValidAuthenticationDetails(userDTO.getPassword(), storedPassword)) {
             currentUser.setUsername(userDTO.getUsername());
+            currentUser.setId(userRepository.getIfForUsername(userDTO.getUsername()));
             return "authentication successful";
         } else {
             return "incorrect password";
@@ -75,6 +76,7 @@ public class AuthenticationController {
             return "not authenticated";
         } else {
             currentUser.setUsername(null);
+            currentUser.setId(-1);
             return "deauthenticated";
         }
     }

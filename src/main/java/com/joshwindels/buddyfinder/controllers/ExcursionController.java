@@ -4,6 +4,7 @@ import com.joshwindels.buddyfinder.dos.CurrentUser;
 import com.joshwindels.buddyfinder.dos.ExcursionDO;
 import com.joshwindels.buddyfinder.dtos.ExcursionDTO;
 import com.joshwindels.buddyfinder.repositories.ExcursionRepository;
+import com.joshwindels.buddyfinder.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,14 +19,20 @@ public class ExcursionController {
     CurrentUser currentUser;
 
     @Autowired
+    UserRepository userRepository;
+
+    @Autowired
     ExcursionRepository excursionRepository;
 
     @PostMapping("/create")
     public @ResponseBody String createExcursion(ExcursionDTO excursionDTO) {
-        ExcursionDO excursionDO = convertToDo(excursionDTO);
-        excursionRepository.storeExcursion(excursionDO);
-
-        return "excursion created";
+        if (currentUser.getUsername() == null) {
+            return "not authenticated";
+        } else {
+            ExcursionDO excursionDO = convertToDo(excursionDTO);
+            excursionRepository.storeExcursion(excursionDO);
+            return "excursion created";
+        }
     }
 
     private ExcursionDO convertToDo(ExcursionDTO excursionDTO) {

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 public class CurrentUser {
 
     private String username;
+    private Integer id;
 
     public String getUsername() {
         return username;
@@ -16,5 +17,13 @@ public class CurrentUser {
 
     public void setUsername(String userId) {
         this.username = userId;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }
