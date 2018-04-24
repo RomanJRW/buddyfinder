@@ -217,7 +217,7 @@ public class ExcursionControllerTest {
     }
 
     @Test
-    public void givenAnExistingExcursion_whenUpdatingExcursionWithEmptyName_thenExcursionIsStoredAndSuccessMessageReturned() {
+    public void givenAnExistingExcursion_whenUpdatingExcursionWithEmptyName_thenExcursionIsStoredAndErrorMessageReturned() {
         when(currentUserMock.getUsername()).thenReturn(USERNAME);
         when(currentUserMock.getId()).thenReturn(OWNER_ID);
         when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
@@ -229,7 +229,7 @@ public class ExcursionControllerTest {
     }
 
     @Test
-    public void givenAnExistingExcursion_whenUpdatingExcursionWithNoName_thenExcursionIsStoredAndSuccessMessageReturned() {
+    public void givenAnExistingExcursion_whenUpdatingExcursionWithNoName_thenExcursionIsStoredAndErrorMessageReturned() {
         when(currentUserMock.getUsername()).thenReturn(USERNAME);
         when(currentUserMock.getId()).thenReturn(OWNER_ID);
         when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
@@ -241,7 +241,7 @@ public class ExcursionControllerTest {
     }
 
     @Test
-    public void givenAnExistingExcursion_whenUpdatingExcursionWithEmptyStartLocation_thenExcursionIsStoredAndSuccessMessageReturned() {
+    public void givenAnExistingExcursion_whenUpdatingExcursionWithEmptyStartLocation_thenExcursionIsStoredAndErrorMessageReturned() {
         when(currentUserMock.getUsername()).thenReturn(USERNAME);
         when(currentUserMock.getId()).thenReturn(OWNER_ID);
         when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
@@ -253,7 +253,7 @@ public class ExcursionControllerTest {
     }
 
     @Test
-    public void givenAnExistingExcursion_whenUpdatingExcursionWithNoStartLocation_thenExcursionIsStoredAndSuccessMessageReturned() {
+    public void givenAnExistingExcursion_whenUpdatingExcursionWithNoStartLocation_thenExcursionIsStoredAndErrorMessageReturned() {
         when(currentUserMock.getUsername()).thenReturn(USERNAME);
         when(currentUserMock.getId()).thenReturn(OWNER_ID);
         when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
@@ -265,7 +265,7 @@ public class ExcursionControllerTest {
     }
 
     @Test
-    public void givenAnExistingExcursion_whenUpdatingExcursionWithEmptyEndLocation_thenExcursionIsStoredAndSuccessMessageReturned() {
+    public void givenAnExistingExcursion_whenUpdatingExcursionWithEmptyEndLocation_thenExcursionIsStoredAndErrorMessageReturned() {
         when(currentUserMock.getUsername()).thenReturn(USERNAME);
         when(currentUserMock.getId()).thenReturn(OWNER_ID);
         when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
@@ -277,7 +277,7 @@ public class ExcursionControllerTest {
     }
 
     @Test
-    public void givenAnExistingExcursion_whenUpdatingExcursionWithNoEndLocation_thenExcursionIsStoredAndSuccessMessageReturned() {
+    public void givenAnExistingExcursion_whenUpdatingExcursionWithNoEndLocation_thenExcursionIsStoredAndErrorMessageReturned() {
         when(currentUserMock.getUsername()).thenReturn(USERNAME);
         when(currentUserMock.getId()).thenReturn(OWNER_ID);
         when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
@@ -289,7 +289,7 @@ public class ExcursionControllerTest {
     }
 
     @Test
-    public void givenAnExistingExcursion_whenUpdatingExcursionWithNoStartDate_thenExcursionIsStoredAndSuccessMessageReturned() {
+    public void givenAnExistingExcursion_whenUpdatingExcursionWithNoStartDate_thenExcursionIsStoredAndErrorMessageReturned() {
         when(currentUserMock.getUsername()).thenReturn(USERNAME);
         when(currentUserMock.getId()).thenReturn(OWNER_ID);
         when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
@@ -301,7 +301,7 @@ public class ExcursionControllerTest {
     }
 
     @Test
-    public void givenAnExistingExcursion_whenUpdatingExcursionWithNoEndDate_thenExcursionIsStoredAndSuccessMessageReturned() {
+    public void givenAnExistingExcursion_whenUpdatingExcursionWithNoEndDate_thenExcursionIsStoredAndErrorMessageReturned() {
         when(currentUserMock.getUsername()).thenReturn(USERNAME);
         when(currentUserMock.getId()).thenReturn(OWNER_ID);
         when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
@@ -313,7 +313,7 @@ public class ExcursionControllerTest {
     }
 
     @Test
-    public void givenAnExistingExcursion_whenUpdatingExcursionWithNegativeEstimatedCost_thenExcursionIsStoredAndSuccessMessageReturned() {
+    public void givenAnExistingExcursion_whenUpdatingExcursionWithNegativeEstimatedCost_thenExcursionIsStoredAndErrorMessageReturned() {
         when(currentUserMock.getUsername()).thenReturn(USERNAME);
         when(currentUserMock.getId()).thenReturn(OWNER_ID);
         when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
@@ -325,7 +325,7 @@ public class ExcursionControllerTest {
     }
 
     @Test
-    public void givenAnExistingExcursion_whenUpdatingExcursionWithNegativeRequiredBuddies_thenExcursionIsStoredAndSuccessMessageReturned() {
+    public void givenAnExistingExcursion_whenUpdatingExcursionWithNegativeRequiredBuddies_thenExcursionIsStoredAndErrorMessageReturned() {
         when(currentUserMock.getUsername()).thenReturn(USERNAME);
         when(currentUserMock.getId()).thenReturn(OWNER_ID);
         when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
@@ -337,7 +337,7 @@ public class ExcursionControllerTest {
     }
 
     @Test
-    public void givenAnExistingExcursion_whenUpdatingExcursionWithEmptyDescription_thenExcursionIsStoredAndSuccessMessageReturned() {
+    public void givenAnExistingExcursion_whenUpdatingExcursionWithEmptyDescription_thenExcursionIsStoredAndErrorMessageReturned() {
         when(currentUserMock.getUsername()).thenReturn(USERNAME);
         when(currentUserMock.getId()).thenReturn(OWNER_ID);
         when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
@@ -349,7 +349,7 @@ public class ExcursionControllerTest {
     }
 
     @Test
-    public void givenAnExistingExcursion_whenUpdatingExcursionWithNoDescription_thenExcursionIsStoredAndSuccessMessageReturned() {
+    public void givenAnExistingExcursion_whenUpdatingExcursionWithNoDescription_thenExcursionIsStoredAndErrorMessageReturned() {
         when(currentUserMock.getUsername()).thenReturn(USERNAME);
         when(currentUserMock.getId()).thenReturn(OWNER_ID);
         when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
@@ -361,7 +361,7 @@ public class ExcursionControllerTest {
     }
 
     @Test
-    public void givenAnExistingExcursion_whenUpdatingExcursionWithStartDateAfterEndDate_thenExcursionIsStoredAndSuccessMessageReturned() {
+    public void givenAnExistingExcursion_whenUpdatingExcursionWithStartDateAfterEndDate_thenExcursionIsStoredAndErrorMessageReturned() {
         when(currentUserMock.getUsername()).thenReturn(USERNAME);
         when(currentUserMock.getId()).thenReturn(OWNER_ID);
         when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
@@ -373,7 +373,7 @@ public class ExcursionControllerTest {
     }
 
     @Test
-    public void givenAnExistingExcursion_whenUpdatingExcursionWithEndDateBeforeStartDate_thenExcursionIsStoredAndSuccessMessageReturned() {
+    public void givenAnExistingExcursion_whenUpdatingExcursionWithEndDateBeforeStartDate_thenExcursionIsStoredAndErrorMessageReturned() {
         when(currentUserMock.getUsername()).thenReturn(USERNAME);
         when(currentUserMock.getId()).thenReturn(OWNER_ID);
         when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
@@ -381,6 +381,17 @@ public class ExcursionControllerTest {
         excursionDTO.setEndDate(new Date(2018, 10, 10));
 
         assertEquals("end date must be after start date", excursionController.updateExcursion(excursionDTO));
+        verify(excursionRepositoryMock, never()).updateExcursion(any(ExcursionDO.class));
+    }
+
+    @Test
+    public void givenAnExcursionUpdate_whenExcursionDoesNotExist_thenNoInformationIsStoredAndErrorMessageReturned() {
+        when(currentUserMock.getUsername()).thenReturn(USERNAME);
+        when(currentUserMock.getId()).thenReturn(OWNER_ID);
+        when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.empty());
+        ExcursionDTO excursionDTO = getValidUpdateExcursionDTO();
+
+        assertEquals("excursion does not exist", excursionController.updateExcursion(excursionDTO));
         verify(excursionRepositoryMock, never()).updateExcursion(any(ExcursionDO.class));
     }
 
