@@ -360,6 +360,30 @@ public class ExcursionControllerTest {
         verify(excursionRepositoryMock, never()).updateExcursion(any(ExcursionDO.class));
     }
 
+    @Test
+    public void givenAnExistingExcursion_whenUpdatingExcursionWithStartDateAfterEndDate_thenExcursionIsStoredAndSuccessMessageReturned() {
+        when(currentUserMock.getUsername()).thenReturn(USERNAME);
+        when(currentUserMock.getId()).thenReturn(OWNER_ID);
+        when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
+        ExcursionDTO excursionDTO = getValidUpdateExcursionDTO();
+        excursionDTO.setStartDate(new Date(2018, 10, 20));
+
+        assertEquals("end date must be after start date", excursionController.updateExcursion(excursionDTO));
+        verify(excursionRepositoryMock, never()).updateExcursion(any(ExcursionDO.class));
+    }
+
+    @Test
+    public void givenAnExistingExcursion_whenUpdatingExcursionWithEndDateBeforeStartDate_thenExcursionIsStoredAndSuccessMessageReturned() {
+        when(currentUserMock.getUsername()).thenReturn(USERNAME);
+        when(currentUserMock.getId()).thenReturn(OWNER_ID);
+        when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
+        ExcursionDTO excursionDTO = getValidUpdateExcursionDTO();
+        excursionDTO.setEndDate(new Date(2018, 10, 10));
+
+        assertEquals("end date must be after start date", excursionController.updateExcursion(excursionDTO));
+        verify(excursionRepositoryMock, never()).updateExcursion(any(ExcursionDO.class));
+    }
+
     private ExcursionDTO getValidNewExcursionDTO() {
         return new ExcursionDTOBuilder()
                 .id(EXCURSION_ID)
