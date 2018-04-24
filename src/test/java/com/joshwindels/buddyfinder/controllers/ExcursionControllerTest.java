@@ -389,6 +389,28 @@ public class ExcursionControllerTest {
         when(currentUserMock.getUsername()).thenReturn(USERNAME);
         when(currentUserMock.getId()).thenReturn(OWNER_ID);
         when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.empty());
+
+        assertEquals("excursion does not exist", excursionController.updateExcursion(getValidNewExcursionDTO()));
+        verify(excursionRepositoryMock, never()).updateExcursion(any(ExcursionDO.class));
+    }
+
+    @Test
+    public void givenAnExcursionUpdate_whenExcursionWasPostedByDifferentUser_thenNoInformationIsStoredAndErrorMessageReturned() {
+        when(currentUserMock.getUsername()).thenReturn(USERNAME);
+        when(currentUserMock.getId()).thenReturn(OWNER_ID);
+        ExcursionDO storedExcursion = getValidExcursionDO();
+        storedExcursion.setOwnerId(100);
+        when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(storedExcursion));
+        ExcursionDTO excursionDTO = getValidUpdateExcursionDTO();
+
+        assertEquals("user does not have permission to update this excursion", excursionController.updateExcursion(excursionDTO));
+        verify(excursionRepositoryMock, never()).updateExcursion(any(ExcursionDO.class));
+    }
+
+    @Test
+    public void givenAnUnauthenticatedUser_whenUpdatingExcursion_thenNoInformationIsStoredAndErrorMessageReturned() {
+        when(currentUserMock.getUsername()).thenReturn(null);;
+        when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.empty());
         ExcursionDTO excursionDTO = getValidUpdateExcursionDTO();
 
         assertEquals("excursion does not exist", excursionController.updateExcursion(excursionDTO));
