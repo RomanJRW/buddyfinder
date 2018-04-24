@@ -288,6 +288,30 @@ public class ExcursionControllerTest {
         verify(excursionRepositoryMock, never()).updateExcursion(any(ExcursionDO.class));
     }
 
+    @Test
+    public void givenAnExistingExcursion_whenUpdatingExcursionWithNoStartDate_thenExcursionIsStoredAndSuccessMessageReturned() {
+        when(currentUserMock.getUsername()).thenReturn(USERNAME);
+        when(currentUserMock.getId()).thenReturn(OWNER_ID);
+        when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
+        ExcursionDTO excursionDTO = getValidUpdateExcursionDTO();
+        excursionDTO.setStartDate(null);
+
+        assertEquals("all fields must be valid", excursionController.updateExcursion(excursionDTO));
+        verify(excursionRepositoryMock, never()).updateExcursion(any(ExcursionDO.class));
+    }
+
+    @Test
+    public void givenAnExistingExcursion_whenUpdatingExcursionWithNoEndDate_thenExcursionIsStoredAndSuccessMessageReturned() {
+        when(currentUserMock.getUsername()).thenReturn(USERNAME);
+        when(currentUserMock.getId()).thenReturn(OWNER_ID);
+        when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
+        ExcursionDTO excursionDTO = getValidUpdateExcursionDTO();
+        excursionDTO.setEndDate(null);
+
+        assertEquals("all fields must be valid", excursionController.updateExcursion(excursionDTO));
+        verify(excursionRepositoryMock, never()).updateExcursion(any(ExcursionDO.class));
+    }
+
     private ExcursionDTO getValidNewExcursionDTO() {
         return new ExcursionDTOBuilder()
                 .id(EXCURSION_ID)
