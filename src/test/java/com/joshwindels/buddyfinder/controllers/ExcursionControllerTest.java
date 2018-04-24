@@ -410,10 +410,20 @@ public class ExcursionControllerTest {
     @Test
     public void givenAnUnauthenticatedUser_whenUpdatingExcursion_thenNoInformationIsStoredAndErrorMessageReturned() {
         when(currentUserMock.getUsername()).thenReturn(null);;
+        when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
+        ExcursionDTO excursionDTO = getValidUpdateExcursionDTO();
+
+        assertEquals("not authenticated", excursionController.updateExcursion(excursionDTO));
+        verify(excursionRepositoryMock, never()).updateExcursion(any(ExcursionDO.class));
+    }
+
+    @Test
+    public void givenAnUnauthenticatedUser_whenUpdatingNonExistentExcursion_thenNoInformationIsStoredAndErrorMessageReturned() {
+        when(currentUserMock.getUsername()).thenReturn(null);;
         when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.empty());
         ExcursionDTO excursionDTO = getValidUpdateExcursionDTO();
 
-        assertEquals("excursion does not exist", excursionController.updateExcursion(excursionDTO));
+        assertEquals("not authenticated", excursionController.updateExcursion(excursionDTO));
         verify(excursionRepositoryMock, never()).updateExcursion(any(ExcursionDO.class));
     }
 
