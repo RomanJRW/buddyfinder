@@ -409,7 +409,7 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenAnUnauthenticatedUser_whenUpdatingExcursion_thenNoInformationIsStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn(null);;
+        when(currentUserMock.getUsername()).thenReturn(null);
         when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
         ExcursionDTO excursionDTO = getValidUpdateExcursionDTO();
 
@@ -419,12 +419,50 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenAnUnauthenticatedUser_whenUpdatingNonExistentExcursion_thenNoInformationIsStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn(null);;
+        when(currentUserMock.getUsername()).thenReturn(null);
         when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.empty());
         ExcursionDTO excursionDTO = getValidUpdateExcursionDTO();
 
         assertEquals("not authenticated", excursionController.updateExcursion(excursionDTO));
         verify(excursionRepositoryMock, never()).updateExcursion(any(ExcursionDO.class));
+    }
+
+    @Test
+    public void givenAnExistingExcursionPostedByUser_whenDeletingExcursion_thenInformationIsDeletedFromStorageAndSuccessMessageReturned() {
+        when(currentUserMock.getUsername()).thenReturn(USERNAME);
+        when(currentUserMock.getId()).thenReturn(OWNER_ID);
+        when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
+
+        assertEquals("excursion deleted", excursionController.deleteExcursion(EXCURSION_ID));
+        verify(excursionRepositoryMock, times(1)).deleteExcursion(EXCURSION_ID);
+    }
+
+    @Test
+    public void givenAnExistingExcursionPostedByDifferentUser_whenDeletingExcursion_thenNoInformationIsDeletedFromStorageAndErrorMessageReturned() {
+        when(currentUserMock.getUsername()).thenReturn(USERNAME);
+        when(currentUserMock.getId()).thenReturn(11);
+        when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
+
+        assertEquals("user doesn't have permission to delete excursion", excursionController.deleteExcursion(EXCURSION_ID));
+        verify(excursionRepositoryMock, never()).deleteExcursion(EXCURSION_ID);
+    }
+
+    @Test
+    public void givenAnExcursionNotInStorage_whenDeletingExcursion_thenNoInformationIsDeletedFromStorageAndErrorMessageReturned() {
+        when(currentUserMock.getUsername()).thenReturn(USERNAME);
+        when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.empty());
+
+        assertEquals("excursion does not exist", excursionController.deleteExcursion(EXCURSION_ID));
+        verify(excursionRepositoryMock, never()).deleteExcursion(EXCURSION_ID);
+    }
+
+    @Test
+    public void givenAnUnauthenticatedUser_whenDeletingExcursion_thenNoInformationIsDeletedFromStorageAndErrorMessageReturned() {
+        when(currentUserMock.getUsername()).thenReturn(null);
+        when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
+
+        assertEquals("not authenticated", excursionController.deleteExcursion(EXCURSION_ID));
+        verify(excursionRepositoryMock, never()).deleteExcursion(EXCURSION_ID);
     }
 
     private ExcursionDTO getValidNewExcursionDTO() {

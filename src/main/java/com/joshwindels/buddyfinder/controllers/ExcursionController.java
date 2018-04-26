@@ -9,6 +9,7 @@ import com.joshwindels.buddyfinder.repositories.ExcursionRepository;
 import com.joshwindels.buddyfinder.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,6 +49,23 @@ public class ExcursionController {
         ExcursionDO excursionDO = convertToDo(excursionDTO);
         excursionRepository.updateExcursion(excursionDO);
         return "excursion updated";
+    }
+
+    @DeleteMapping("/delete")
+    public String deleteExcursion(int excursionId) {
+        if (currentUser.getUsername() == null) {
+            return "not authenticated";
+        }
+        Optional<ExcursionDO> storedExcursion = excursionRepository.getExcursionForId(excursionId);
+        if (storedExcursion.isPresent()) {
+            if (storedExcursion.get().getOwnerId() == currentUser.getId()) {
+                excursionRepository.deleteExcursion(excursionId);
+                return "excursion deleted";
+            }
+            return "user doesn't have permission to delete excursion";
+        } else {
+            return "excursion does not exist";
+        }
     }
 
     private Optional<String> getCreateExcursionErrorMessage(ExcursionDTO excursionDTO) {

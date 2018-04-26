@@ -16,10 +16,14 @@ public class ExcursionRepository {
     public void storeExcursion(ExcursionDO excursionDO) {
     }
 
-    public void updateExcursion(ExcursionDO any) {
+    public void updateExcursion(ExcursionDO excursionDO) {
     }
 
-    public Optional<ExcursionDO> getExcursionForId(int id) {
+    public Optional<ExcursionDO> getExcursionForId(int excursionId) {
         return null;
+    }
+
+    public void deleteExcursion(int excursionId) {
+
     }
 }
