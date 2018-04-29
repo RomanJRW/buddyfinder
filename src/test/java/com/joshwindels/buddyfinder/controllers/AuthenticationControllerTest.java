@@ -3,6 +3,7 @@ package com.joshwindels.buddyfinder.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -12,7 +13,9 @@ import static org.mockito.Mockito.when;
 import com.joshwindels.buddyfinder.dos.CurrentUser;
 import com.joshwindels.buddyfinder.dos.UserDO;
 import com.joshwindels.buddyfinder.dtos.UserDTO;
+import com.joshwindels.buddyfinder.helpers.AuthenticationHelper;
 import com.joshwindels.buddyfinder.repositories.UserRepository;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -32,11 +35,24 @@ public class AuthenticationControllerTest {
     @Mock
     CurrentUser currentUserMock;
 
+    @Mock
+    AuthenticationHelper authenticationHelper;
+
     @InjectMocks
     AuthenticationController authenticationController;
 
     @Captor
     private ArgumentCaptor<UserDO> userDOCaptor;
+
+    @Before
+    public void setup() {
+        when(authenticationHelper.convertToUserDO(any(UserDTO.class))).thenCallRealMethod();
+        when(authenticationHelper.emailAddressIsValid(anyString())).thenCallRealMethod();
+        when(authenticationHelper.telephoneNumberIsValid(anyString())).thenCallRealMethod();
+        when(authenticationHelper.isValidAuthenticationDetails(anyString(), anyString())).thenCallRealMethod();
+        when(authenticationHelper.getEncryptedPassword(anyString())).thenCallRealMethod();
+        when(authenticationHelper.getValidationErrorMessage(any(UserDTO.class))).thenCallRealMethod();
+    }
 
     @Test
     public void givenBlankUsername_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
