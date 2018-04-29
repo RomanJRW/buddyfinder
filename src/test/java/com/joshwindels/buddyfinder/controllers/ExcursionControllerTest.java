@@ -1,5 +1,6 @@
 package com.joshwindels.buddyfinder.controllers;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -7,7 +8,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import com.joshwindels.buddyfinder.dos.CurrentUser;
@@ -15,7 +18,9 @@ import com.joshwindels.buddyfinder.dos.ExcursionDO;
 import com.joshwindels.buddyfinder.dos.ExcursionDOBuilder;
 import com.joshwindels.buddyfinder.dtos.ExcursionDTO;
 import com.joshwindels.buddyfinder.dtos.ExcursionDTOBuilder;
+import com.joshwindels.buddyfinder.filters.ExcursionFilter;
 import com.joshwindels.buddyfinder.repositories.ExcursionRepository;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -45,10 +50,14 @@ public class ExcursionControllerTest {
     @InjectMocks
     ExcursionController excursionController;
 
+    @Before
+    public void setup() {
+        when(currentUserMock.getUsername()).thenReturn(USERNAME);
+    }
+
     @Test
     public void givenANewExcursion_whenCreatingExcursion_thenExcursionIsStoredAndSuccessMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn("username");
-        ExcursionDTO excursionDTO = getValidNewExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
 
         assertEquals("excursion created", excursionController.createExcursion(excursionDTO));
         verify(excursionRepositoryMock, times(1)).storeExcursion(any(ExcursionDO.class));
@@ -56,8 +65,7 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenANewExcursionWithEmptyName_whenCreatingExcursion_thenExcursionIsNotStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn("username");
-        ExcursionDTO excursionDTO = getValidNewExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
         excursionDTO.setName("");
 
         assertEquals("all fields must be provided", excursionController.createExcursion(excursionDTO));
@@ -66,8 +74,7 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenANewExcursionWithNoName_whenCreatingExcursion_thenExcursionIsNotStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn("username");
-        ExcursionDTO excursionDTO = getValidNewExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
         excursionDTO.setName(null);
 
         assertEquals("all fields must be provided", excursionController.createExcursion(excursionDTO));
@@ -76,8 +83,7 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenANewExcursionWithEmptyStartLocation_whenCreatingExcursion_thenExcursionIsNotStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn("username");
-        ExcursionDTO excursionDTO = getValidNewExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
         excursionDTO.setStartLocation("");
 
         assertEquals("all fields must be provided", excursionController.createExcursion(excursionDTO));
@@ -86,8 +92,7 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenANewExcursionWithNoStartLocation_whenCreatingExcursion_thenExcursionIsNotStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn("username");
-        ExcursionDTO excursionDTO = getValidNewExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
         excursionDTO.setStartLocation(null);
 
         assertEquals("all fields must be provided", excursionController.createExcursion(excursionDTO));
@@ -96,8 +101,7 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenANewExcursionWithEmptyEndLocation_whenCreatingExcursion_thenExcursionIsNotStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn("username");
-        ExcursionDTO excursionDTO = getValidNewExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
         excursionDTO.setEndLocation("");
 
         assertEquals("all fields must be provided", excursionController.createExcursion(excursionDTO));
@@ -106,8 +110,7 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenANewExcursionWithNoEndLocation_whenCreatingExcursion_thenExcursionIsNotStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn("username");
-        ExcursionDTO excursionDTO = getValidNewExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
         excursionDTO.setEndLocation(null);
 
         assertEquals("all fields must be provided", excursionController.createExcursion(excursionDTO));
@@ -116,8 +119,7 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenANewExcursionWithNoStartDate_whenCreatingExcursion_thenExcursionIsNotStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn("username");
-        ExcursionDTO excursionDTO = getValidNewExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
         excursionDTO.setStartDate(null);
 
         assertEquals("all fields must be provided", excursionController.createExcursion(excursionDTO));
@@ -126,8 +128,7 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenANewExcursionWithNoEndDate_whenCreatingExcursion_thenExcursionIsNotStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn("username");
-        ExcursionDTO excursionDTO = getValidNewExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
         excursionDTO.setEndDate(null);
 
         assertEquals("all fields must be provided", excursionController.createExcursion(excursionDTO));
@@ -136,8 +137,7 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenANewExcursionWithNegativeEstimatedCost_whenCreatingExcursion_thenExcursionIsNotStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn("username");
-        ExcursionDTO excursionDTO = getValidNewExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
         excursionDTO.setEstimatedCost(-1);
 
         assertEquals("all fields must be provided", excursionController.createExcursion(excursionDTO));
@@ -146,8 +146,7 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenANewExcursionWithNoRequiredBuddies_whenCreatingExcursion_thenExcursionIsNotStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn("username");
-        ExcursionDTO excursionDTO = getValidNewExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
         excursionDTO.setRequiredBuddies(0);
 
         assertEquals("all fields must be provided", excursionController.createExcursion(excursionDTO));
@@ -156,8 +155,7 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenANewExcursionWithEmptyDescription_whenCreatingExcursion_thenExcursionIsNotStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn("username");
-        ExcursionDTO excursionDTO = getValidNewExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
         excursionDTO.setDescription("");
 
         assertEquals("all fields must be provided", excursionController.createExcursion(excursionDTO));
@@ -166,8 +164,7 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenANewExcursionWithNoDescription_whenCreatingExcursion_thenExcursionIsNotStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn("username");
-        ExcursionDTO excursionDTO = getValidNewExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
         excursionDTO.setDescription(null);
 
         assertEquals("all fields must be provided", excursionController.createExcursion(excursionDTO));
@@ -176,8 +173,7 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenANewExcursionWithMultipleMissingFields_whenCreatingExcursion_thenExcursionIsNotStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn("username");
-        ExcursionDTO excursionDTO = getValidNewExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
         excursionDTO.setName(null);
         excursionDTO.setRequiredBuddies(0);
         excursionDTO.setDescription(null);
@@ -188,8 +184,7 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenANewExcursionWithEndDateBeforeStartDate_whenCreatingExcursion_thenExcursionIsNotStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn(USERNAME);
-        ExcursionDTO excursionDTO = getValidNewExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
         excursionDTO.setEndDate(new Date(2017, 6, 6));
 
         assertEquals("end date must be after start date", excursionController.createExcursion(excursionDTO));
@@ -199,7 +194,7 @@ public class ExcursionControllerTest {
     @Test
     public void givenUnauthenticatedUser_whenCreatingExcursion_thenExcursionIsNotStoredAndErrorMessageReturned() {
         when(currentUserMock.getUsername()).thenReturn(null);
-        ExcursionDTO excursionDTO = getValidNewExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
 
         assertEquals("not authenticated", excursionController.createExcursion(excursionDTO));
         verify(excursionRepositoryMock, never()).storeExcursion(any(ExcursionDO.class));
@@ -207,10 +202,9 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenAnExistingExcursion_whenUpdatingExcursion_thenExcursionIsStoredAndSuccessMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn(USERNAME);
         when(currentUserMock.getId()).thenReturn(OWNER_ID);
         when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
-        ExcursionDTO excursionDTO = getValidUpdateExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
 
         assertEquals("excursion updated", excursionController.updateExcursion(excursionDTO));
         verify(excursionRepositoryMock, times(1)).updateExcursion(any(ExcursionDO.class));
@@ -218,10 +212,7 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenAnExistingExcursion_whenUpdatingExcursionWithEmptyName_thenExcursionIsStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn(USERNAME);
-        when(currentUserMock.getId()).thenReturn(OWNER_ID);
-        when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
-        ExcursionDTO excursionDTO = getValidUpdateExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
         excursionDTO.setName("");
 
         assertEquals("all fields must be valid", excursionController.updateExcursion(excursionDTO));
@@ -230,10 +221,7 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenAnExistingExcursion_whenUpdatingExcursionWithNoName_thenExcursionIsStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn(USERNAME);
-        when(currentUserMock.getId()).thenReturn(OWNER_ID);
-        when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
-        ExcursionDTO excursionDTO = getValidUpdateExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
         excursionDTO.setName(null);
 
         assertEquals("all fields must be valid", excursionController.updateExcursion(excursionDTO));
@@ -242,10 +230,7 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenAnExistingExcursion_whenUpdatingExcursionWithEmptyStartLocation_thenExcursionIsStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn(USERNAME);
-        when(currentUserMock.getId()).thenReturn(OWNER_ID);
-        when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
-        ExcursionDTO excursionDTO = getValidUpdateExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
         excursionDTO.setStartLocation("");
 
         assertEquals("all fields must be valid", excursionController.updateExcursion(excursionDTO));
@@ -254,10 +239,7 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenAnExistingExcursion_whenUpdatingExcursionWithNoStartLocation_thenExcursionIsStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn(USERNAME);
-        when(currentUserMock.getId()).thenReturn(OWNER_ID);
-        when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
-        ExcursionDTO excursionDTO = getValidUpdateExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
         excursionDTO.setStartLocation(null);
 
         assertEquals("all fields must be valid", excursionController.updateExcursion(excursionDTO));
@@ -266,10 +248,7 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenAnExistingExcursion_whenUpdatingExcursionWithEmptyEndLocation_thenExcursionIsStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn(USERNAME);
-        when(currentUserMock.getId()).thenReturn(OWNER_ID);
-        when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
-        ExcursionDTO excursionDTO = getValidUpdateExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
         excursionDTO.setEndLocation("");
 
         assertEquals("all fields must be valid", excursionController.updateExcursion(excursionDTO));
@@ -278,10 +257,7 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenAnExistingExcursion_whenUpdatingExcursionWithNoEndLocation_thenExcursionIsStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn(USERNAME);
-        when(currentUserMock.getId()).thenReturn(OWNER_ID);
-        when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
-        ExcursionDTO excursionDTO = getValidUpdateExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
         excursionDTO.setEndLocation(null);
 
         assertEquals("all fields must be valid", excursionController.updateExcursion(excursionDTO));
@@ -290,10 +266,7 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenAnExistingExcursion_whenUpdatingExcursionWithNoStartDate_thenExcursionIsStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn(USERNAME);
-        when(currentUserMock.getId()).thenReturn(OWNER_ID);
-        when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
-        ExcursionDTO excursionDTO = getValidUpdateExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
         excursionDTO.setStartDate(null);
 
         assertEquals("all fields must be valid", excursionController.updateExcursion(excursionDTO));
@@ -302,10 +275,7 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenAnExistingExcursion_whenUpdatingExcursionWithNoEndDate_thenExcursionIsStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn(USERNAME);
-        when(currentUserMock.getId()).thenReturn(OWNER_ID);
-        when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
-        ExcursionDTO excursionDTO = getValidUpdateExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
         excursionDTO.setEndDate(null);
 
         assertEquals("all fields must be valid", excursionController.updateExcursion(excursionDTO));
@@ -314,10 +284,7 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenAnExistingExcursion_whenUpdatingExcursionWithNegativeEstimatedCost_thenExcursionIsStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn(USERNAME);
-        when(currentUserMock.getId()).thenReturn(OWNER_ID);
-        when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
-        ExcursionDTO excursionDTO = getValidUpdateExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
         excursionDTO.setEstimatedCost(-1);
 
         assertEquals("all fields must be valid", excursionController.updateExcursion(excursionDTO));
@@ -326,10 +293,7 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenAnExistingExcursion_whenUpdatingExcursionWithNegativeRequiredBuddies_thenExcursionIsStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn(USERNAME);
-        when(currentUserMock.getId()).thenReturn(OWNER_ID);
-        when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
-        ExcursionDTO excursionDTO = getValidUpdateExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
         excursionDTO.setRequiredBuddies(-1);
 
         assertEquals("all fields must be valid", excursionController.updateExcursion(excursionDTO));
@@ -338,10 +302,7 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenAnExistingExcursion_whenUpdatingExcursionWithEmptyDescription_thenExcursionIsStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn(USERNAME);
-        when(currentUserMock.getId()).thenReturn(OWNER_ID);
-        when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
-        ExcursionDTO excursionDTO = getValidUpdateExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
         excursionDTO.setDescription("");
 
         assertEquals("all fields must be valid", excursionController.updateExcursion(excursionDTO));
@@ -350,10 +311,7 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenAnExistingExcursion_whenUpdatingExcursionWithNoDescription_thenExcursionIsStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn(USERNAME);
-        when(currentUserMock.getId()).thenReturn(OWNER_ID);
-        when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
-        ExcursionDTO excursionDTO = getValidUpdateExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
         excursionDTO.setDescription(null);
 
         assertEquals("all fields must be valid", excursionController.updateExcursion(excursionDTO));
@@ -362,10 +320,7 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenAnExistingExcursion_whenUpdatingExcursionWithStartDateAfterEndDate_thenExcursionIsStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn(USERNAME);
-        when(currentUserMock.getId()).thenReturn(OWNER_ID);
-        when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
-        ExcursionDTO excursionDTO = getValidUpdateExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
         excursionDTO.setStartDate(new Date(2018, 10, 20));
 
         assertEquals("end date must be after start date", excursionController.updateExcursion(excursionDTO));
@@ -374,10 +329,7 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenAnExistingExcursion_whenUpdatingExcursionWithEndDateBeforeStartDate_thenExcursionIsStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn(USERNAME);
-        when(currentUserMock.getId()).thenReturn(OWNER_ID);
-        when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
-        ExcursionDTO excursionDTO = getValidUpdateExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
         excursionDTO.setEndDate(new Date(2018, 10, 10));
 
         assertEquals("end date must be after start date", excursionController.updateExcursion(excursionDTO));
@@ -386,22 +338,20 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenAnExcursionUpdate_whenExcursionDoesNotExist_thenNoInformationIsStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn(USERNAME);
-        when(currentUserMock.getId()).thenReturn(OWNER_ID);
         when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.empty());
 
-        assertEquals("excursion does not exist", excursionController.updateExcursion(getValidNewExcursionDTO()));
+        assertEquals("excursion does not exist", excursionController.updateExcursion(
+                getValidExcursionDTO()));
         verify(excursionRepositoryMock, never()).updateExcursion(any(ExcursionDO.class));
     }
 
     @Test
     public void givenAnExcursionUpdate_whenExcursionWasPostedByDifferentUser_thenNoInformationIsStoredAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn(USERNAME);
         when(currentUserMock.getId()).thenReturn(OWNER_ID);
         ExcursionDO storedExcursion = getValidExcursionDO();
         storedExcursion.setOwnerId(100);
         when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(storedExcursion));
-        ExcursionDTO excursionDTO = getValidUpdateExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
 
         assertEquals("user does not have permission to update this excursion", excursionController.updateExcursion(excursionDTO));
         verify(excursionRepositoryMock, never()).updateExcursion(any(ExcursionDO.class));
@@ -410,8 +360,7 @@ public class ExcursionControllerTest {
     @Test
     public void givenAnUnauthenticatedUser_whenUpdatingExcursion_thenNoInformationIsStoredAndErrorMessageReturned() {
         when(currentUserMock.getUsername()).thenReturn(null);
-        when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
-        ExcursionDTO excursionDTO = getValidUpdateExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
 
         assertEquals("not authenticated", excursionController.updateExcursion(excursionDTO));
         verify(excursionRepositoryMock, never()).updateExcursion(any(ExcursionDO.class));
@@ -420,8 +369,7 @@ public class ExcursionControllerTest {
     @Test
     public void givenAnUnauthenticatedUser_whenUpdatingNonExistentExcursion_thenNoInformationIsStoredAndErrorMessageReturned() {
         when(currentUserMock.getUsername()).thenReturn(null);
-        when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.empty());
-        ExcursionDTO excursionDTO = getValidUpdateExcursionDTO();
+        ExcursionDTO excursionDTO = getValidExcursionDTO();
 
         assertEquals("not authenticated", excursionController.updateExcursion(excursionDTO));
         verify(excursionRepositoryMock, never()).updateExcursion(any(ExcursionDO.class));
@@ -429,7 +377,6 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenAnExistingExcursionPostedByUser_whenDeletingExcursion_thenInformationIsDeletedFromStorageAndSuccessMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn(USERNAME);
         when(currentUserMock.getId()).thenReturn(OWNER_ID);
         when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
 
@@ -439,7 +386,6 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenAnExistingExcursionPostedByDifferentUser_whenDeletingExcursion_thenNoInformationIsDeletedFromStorageAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn(USERNAME);
         when(currentUserMock.getId()).thenReturn(11);
         when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
 
@@ -449,7 +395,6 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenAnExcursionNotInStorage_whenDeletingExcursion_thenNoInformationIsDeletedFromStorageAndErrorMessageReturned() {
-        when(currentUserMock.getUsername()).thenReturn(USERNAME);
         when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.empty());
 
         assertEquals("excursion does not exist", excursionController.deleteExcursion(EXCURSION_ID));
@@ -459,28 +404,26 @@ public class ExcursionControllerTest {
     @Test
     public void givenAnUnauthenticatedUser_whenDeletingExcursion_thenNoInformationIsDeletedFromStorageAndErrorMessageReturned() {
         when(currentUserMock.getUsername()).thenReturn(null);
-        when(excursionRepositoryMock.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getValidExcursionDO()));
 
         assertEquals("not authenticated", excursionController.deleteExcursion(EXCURSION_ID));
         verify(excursionRepositoryMock, never()).deleteExcursion(EXCURSION_ID);
     }
 
-    private ExcursionDTO getValidNewExcursionDTO() {
-        return new ExcursionDTOBuilder()
-                .id(EXCURSION_ID)
-                .ownerId(OWNER_ID)
-                .name(EXCURSION_NAME)
-                .startLocation(START_LOCATION)
-                .endLocation(END_LOCATION)
-                .startDate(START_DATE)
-                .endDate(END_DATE)
-                .estimatedCost(ESTIMATED_COST)
-                .requiredBuddies(REQUIRED_BUDDIES)
-                .description(DESCRIPTION)
-                .build();
+    @Test
+    public void givenAnExcursionRequest_whenProvidedWithComplexFilter_thenFilterMatchedResultsAreReturned() {
+        ExcursionDTO excursionA = getValidExcursionDTO();
+        ExcursionDTO excursionB = getValidExcursionDTO();;
+        ExcursionDTO excursionC = getValidExcursionDTO();;
+
+        ExcursionFilter filter = new ExcursionFilter();
+        when(currentUserMock.getUsername()).thenReturn(USERNAME);
+
+        List<ExcursionDTO> matchedExcursions = excursionController.getExcursions(filter);
+        assertTrue(matchedExcursions.size() == 2);
+        assertTrue(matchedExcursions.containsAll(Arrays.asList(excursionA, excursionB)));
     }
 
-    private ExcursionDTO getValidUpdateExcursionDTO() {
+    private ExcursionDTO getValidExcursionDTO() {
         return new ExcursionDTOBuilder()
                 .id(EXCURSION_ID)
                 .ownerId(OWNER_ID)

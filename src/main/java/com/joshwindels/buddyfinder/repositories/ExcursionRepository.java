@@ -20,7 +20,7 @@ public class ExcursionRepository {
     }
 
     public Optional<ExcursionDO> getExcursionForId(int excursionId) {
-        return null;
+        return Optional.empty();
     }
 
     public void deleteExcursion(int excursionId) {

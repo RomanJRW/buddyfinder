@@ -1,15 +1,18 @@
 package com.joshwindels.buddyfinder.controllers;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.joshwindels.buddyfinder.dos.CurrentUser;
 import com.joshwindels.buddyfinder.dos.ExcursionDO;
 import com.joshwindels.buddyfinder.dtos.ExcursionDTO;
+import com.joshwindels.buddyfinder.filters.ExcursionFilter;
 import com.joshwindels.buddyfinder.repositories.ExcursionRepository;
 import com.joshwindels.buddyfinder.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -66,6 +69,11 @@ public class ExcursionController {
         } else {
             return "excursion does not exist";
         }
+    }
+
+    @GetMapping("/get")
+    public List<ExcursionDTO> getExcursions(ExcursionFilter filter) {
+        return null;
     }
 
     private Optional<String> getCreateExcursionErrorMessage(ExcursionDTO excursionDTO) {
