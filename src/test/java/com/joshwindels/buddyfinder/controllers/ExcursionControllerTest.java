@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +20,7 @@ import com.joshwindels.buddyfinder.dos.ExcursionDOBuilder;
 import com.joshwindels.buddyfinder.dtos.ExcursionDTO;
 import com.joshwindels.buddyfinder.dtos.ExcursionDTOBuilder;
 import com.joshwindels.buddyfinder.filters.ExcursionFilter;
+import com.joshwindels.buddyfinder.helpers.ExcursionConverter;
 import com.joshwindels.buddyfinder.repositories.ExcursionRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,18 +43,24 @@ public class ExcursionControllerTest {
     public static final int REQUIRED_BUDDIES = 2;
     public static final String DESCRIPTION = "a road trip between Belmopan and Belize City, stopping off at some temples along the way";
     public static final String USERNAME = "username";
+
     @Mock
     CurrentUser currentUserMock;
 
     @Mock
     ExcursionRepository excursionRepositoryMock;
 
+    @Mock
+    ExcursionConverter excursionConverterMock;
+
     @InjectMocks
     ExcursionController excursionController;
+
 
     @Before
     public void setup() {
         when(currentUserMock.getUsername()).thenReturn(USERNAME);
+        when(excursionConverterMock.convertToDO(any(ExcursionDTO.class))).thenCallRealMethod();
     }
 
     @Test
@@ -410,17 +418,17 @@ public class ExcursionControllerTest {
     }
 
     @Test
-    public void givenAnExcursionRequest_whenProvidedWithComplexFilter_thenFilterMatchedResultsAreReturned() {
+    public void givenAnExcursionRequest_whenProvidedWithNoFilter_thenAllResultsAreReturned() {
+        when(excursionRepositoryMock.getExcursionsMatchingFilterParameters(any(HashMap.class)))
+                .thenReturn(Arrays.asList(getValidExcursionDO(), getValidExcursionDO(), getValidExcursionDO()));
         ExcursionDTO excursionA = getValidExcursionDTO();
-        ExcursionDTO excursionB = getValidExcursionDTO();;
-        ExcursionDTO excursionC = getValidExcursionDTO();;
-
+        ExcursionDTO excursionB = getValidExcursionDTO();
+        ExcursionDTO excursionC = getValidExcursionDTO();
         ExcursionFilter filter = new ExcursionFilter();
-        when(currentUserMock.getUsername()).thenReturn(USERNAME);
 
         List<ExcursionDTO> matchedExcursions = excursionController.getExcursions(filter);
-        assertTrue(matchedExcursions.size() == 2);
-        assertTrue(matchedExcursions.containsAll(Arrays.asList(excursionA, excursionB)));
+        assertTrue(matchedExcursions.size() == 3);
+        assertTrue(matchedExcursions.containsAll(Arrays.asList(excursionA, excursionB, excursionC)));
     }
 
     private ExcursionDTO getValidExcursionDTO() {

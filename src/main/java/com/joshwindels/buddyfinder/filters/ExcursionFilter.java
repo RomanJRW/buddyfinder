@@ -13,10 +13,10 @@ public class ExcursionFilter {
     private Date startDate;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private Date endDate;
-    private double minEstimatedCost;
-    private double maxEstimatedCost;
-    private int minRequiredBuddies;
-    private int maxRequiredBuddies;
+    private Double minEstimatedCost;
+    private Double maxEstimatedCost;
+    private Integer minRequiredBuddies;
+    private Integer maxRequiredBuddies;
     private String descriptionContains;
 
     public String getNameContains() {
@@ -59,35 +59,35 @@ public class ExcursionFilter {
         this.endDate = endDate;
     }
 
-    public double getMinEstimatedCost() {
+    public Double getMinEstimatedCost() {
         return minEstimatedCost;
     }
 
-    public void setMinEstimatedCost(double minEstimatedCost) {
+    public void setMinEstimatedCost(Double minEstimatedCost) {
         this.minEstimatedCost = minEstimatedCost;
     }
 
-    public double getMaxEstimatedCost() {
+    public Double getMaxEstimatedCost() {
         return maxEstimatedCost;
     }
 
-    public void setMaxEstimatedCost(double maxEstimatedCost) {
+    public void setMaxEstimatedCost(Double maxEstimatedCost) {
         this.maxEstimatedCost = maxEstimatedCost;
     }
 
-    public int getMinRequiredBuddies() {
+    public Integer getMinRequiredBuddies() {
         return minRequiredBuddies;
     }
 
-    public void setMinRequiredBuddies(int minRequiredBuddies) {
+    public void setMinRequiredBuddies(Integer minRequiredBuddies) {
         this.minRequiredBuddies = minRequiredBuddies;
     }
 
-    public int getMaxRequiredBuddies() {
+    public Integer getMaxRequiredBuddies() {
         return maxRequiredBuddies;
     }
 
-    public void setMaxRequiredBuddies(int maxRequiredBuddies) {
+    public void setMaxRequiredBuddies(Integer maxRequiredBuddies) {
         this.maxRequiredBuddies = maxRequiredBuddies;
     }
 

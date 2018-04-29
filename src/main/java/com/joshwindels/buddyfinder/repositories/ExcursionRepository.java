@@ -1,5 +1,7 @@
 package com.joshwindels.buddyfinder.repositories;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import com.joshwindels.buddyfinder.dos.ExcursionDO;
@@ -25,5 +27,9 @@ public class ExcursionRepository {
 
     public void deleteExcursion(int excursionId) {
 
+    }
+
+    public List<ExcursionDO> getExcursionsMatchingFilterParameters(Map<String, Object> filterParameters) {
+        return null;
     }
 }
