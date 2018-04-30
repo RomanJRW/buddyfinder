@@ -1,9 +1,9 @@
 package com.joshwindels.buddyfinder.controllers;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.joshwindels.buddyfinder.dos.CurrentUser;
 import com.joshwindels.buddyfinder.dos.ExcursionDO;
@@ -80,15 +80,13 @@ public class ExcursionController {
 
     @GetMapping("/get")
     public List<ExcursionDTO> getExcursions(ExcursionFilter filter) {
+        if (currentUser.getUsername() == null) {
+            //return "not authenticated";
+        }
         Map<FilterTypes, Object> filterParams = excursionHelper.extractFilterParametersFromFilter(filter);
         List<ExcursionDO> excursions = excursionRepository.getExcursionsMatchingFilterParameters(filterParams);
-        List<ExcursionDTO> detos = new ArrayList<>();
-        for (ExcursionDO exc : excursions) {
-            detos.add(excursionHelper.convertToDTO(exc));
-        }
-        return detos;
-        //return excursions.stream().map(excursionHelper::convertToDTO).collect(
-        //        Collectors.toList());
+        return excursions.stream().map(excursionHelper::convertToDTO).collect(
+                Collectors.toList());
     }
 
     private Optional<String> getCreateExcursionErrorMessage(ExcursionDTO excursionDTO) {

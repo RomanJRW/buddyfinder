@@ -9,6 +9,8 @@ import com.joshwindels.buddyfinder.helpers.AuthenticationHelper;
 import com.joshwindels.buddyfinder.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -39,7 +41,7 @@ public class AuthenticationController {
         return "registration successful";
     }
 
-    @PostMapping("/edit")
+    @PatchMapping("/edit")
     public @ResponseBody String updateUserDetails(UserDTO userDTO) {
         if (currentUser.getUsername() == null || !currentUser.getUsername().equals(userDTO.getUsername())) {
             return "not authenticated";
@@ -54,7 +56,7 @@ public class AuthenticationController {
         }
     }
 
-    @PostMapping("/auth")
+    @GetMapping("/auth")
     public @ResponseBody String authenticateUser(UserDTO userDTO) {
         String storedPassword = userRepository.getStoredPasswordForUser(userDTO.getUsername());
         if (storedPassword == null) {
@@ -68,7 +70,7 @@ public class AuthenticationController {
         }
     }
 
-    @PostMapping("/deauth")
+    @GetMapping("/deauth")
     public @ResponseBody String deuathenticateUser(String username) {
         if (currentUser.getUsername() == null || !currentUser.getUsername().equals(username)) {
             return "not authenticated";
