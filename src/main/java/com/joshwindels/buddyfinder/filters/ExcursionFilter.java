@@ -55,7 +55,7 @@ public class ExcursionFilter {
         return endDate;
     }
 
-    public void setEndDate(Date startDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 

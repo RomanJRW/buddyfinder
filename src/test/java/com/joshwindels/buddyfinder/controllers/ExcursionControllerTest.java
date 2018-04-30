@@ -477,6 +477,17 @@ public class ExcursionControllerTest {
         assertTrue(filterParamsCaptor.getValue().get(FilterTypes.START_DATE).equals(new Date(2018, 2, 10)));
     }
 
+    @Test
+    public void givenAnExcursionRequest_whenProvidedWithEndDateContainsFilter_thenFilteredResultsAreReturned() {
+        ExcursionFilter filter = new ExcursionFilterBuilder().endDate(new Date(2018, 9, 15)).build();
+
+        excursionController.getExcursions(filter);
+        verify(excursionRepositoryMock, times(1)).getExcursionsMatchingFilterParameters(filterParamsCaptor.capture());
+        assertTrue(filterParamsCaptor.getValue().size() == 1);
+        assertTrue(filterParamsCaptor.getValue().containsKey(FilterTypes.END_DATE));
+        assertTrue(filterParamsCaptor.getValue().get(FilterTypes.END_DATE).equals(new Date(2018, 9, 15)));
+    }
+
     private ExcursionDTO getValidExcursionDTO() {
         return new ExcursionDTOBuilder()
                 .id(EXCURSION_ID)
