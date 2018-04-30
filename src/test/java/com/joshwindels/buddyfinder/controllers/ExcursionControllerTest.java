@@ -440,7 +440,6 @@ public class ExcursionControllerTest {
         excursionController.getExcursions(filter);
         verify(excursionRepositoryMock, times(1)).getExcursionsMatchingFilterParameters(filterParamsCaptor.capture());
         assertTrue(filterParamsCaptor.getValue().size() == 1);
-        assertTrue(filterParamsCaptor.getValue().containsKey(FilterTypes.NAME_CONTAINS));
         assertTrue(filterParamsCaptor.getValue().get(FilterTypes.NAME_CONTAINS).equals("fun"));
     }
 
@@ -451,7 +450,6 @@ public class ExcursionControllerTest {
         excursionController.getExcursions(filter);
         verify(excursionRepositoryMock, times(1)).getExcursionsMatchingFilterParameters(filterParamsCaptor.capture());
         assertTrue(filterParamsCaptor.getValue().size() == 1);
-        assertTrue(filterParamsCaptor.getValue().containsKey(FilterTypes.START_LOCATION_CONTAINS));
         assertTrue(filterParamsCaptor.getValue().get(FilterTypes.START_LOCATION_CONTAINS).equals("city"));
     }
 
@@ -462,29 +460,40 @@ public class ExcursionControllerTest {
         excursionController.getExcursions(filter);
         verify(excursionRepositoryMock, times(1)).getExcursionsMatchingFilterParameters(filterParamsCaptor.capture());
         assertTrue(filterParamsCaptor.getValue().size() == 1);
-        assertTrue(filterParamsCaptor.getValue().containsKey(FilterTypes.END_LOCATION_CONTAINS));
         assertTrue(filterParamsCaptor.getValue().get(FilterTypes.END_LOCATION_CONTAINS).equals("city"));
     }
 
     @Test
-    public void givenAnExcursionRequest_whenProvidedWithStartDateContainsFilter_thenFilteredResultsAreReturned() {
+    public void givenAnExcursionRequest_whenProvidedWithStartDateFilter_thenFilteredResultsAreReturned() {
         ExcursionFilter filter = new ExcursionFilterBuilder().startDate(new Date(2018, 2, 10)).build();
 
         excursionController.getExcursions(filter);
         verify(excursionRepositoryMock, times(1)).getExcursionsMatchingFilterParameters(filterParamsCaptor.capture());
         assertTrue(filterParamsCaptor.getValue().size() == 1);
-        assertTrue(filterParamsCaptor.getValue().containsKey(FilterTypes.START_DATE));
         assertTrue(filterParamsCaptor.getValue().get(FilterTypes.START_DATE).equals(new Date(2018, 2, 10)));
     }
 
     @Test
-    public void givenAnExcursionRequest_whenProvidedWithEndDateContainsFilter_thenFilteredResultsAreReturned() {
+    public void givenAnExcursionRequest_whenProvidedWithEndDateFilter_thenFilteredResultsAreReturned() {
         ExcursionFilter filter = new ExcursionFilterBuilder().endDate(new Date(2018, 9, 15)).build();
 
         excursionController.getExcursions(filter);
         verify(excursionRepositoryMock, times(1)).getExcursionsMatchingFilterParameters(filterParamsCaptor.capture());
         assertTrue(filterParamsCaptor.getValue().size() == 1);
-        assertTrue(filterParamsCaptor.getValue().containsKey(FilterTypes.END_DATE));
+        assertTrue(filterParamsCaptor.getValue().get(FilterTypes.END_DATE).equals(new Date(2018, 9, 15)));
+    }
+
+    @Test
+    public void givenAnExcursionRequest_whenProvidedWithStartDateAndEndDateFilter_thenFilteredResultsAreReturned() {
+        ExcursionFilter filter = new ExcursionFilterBuilder()
+                .startDate(new Date(2018, 2, 10))
+                .endDate(new Date(2018, 9, 15))
+                .build();
+
+        excursionController.getExcursions(filter);
+        verify(excursionRepositoryMock, times(1)).getExcursionsMatchingFilterParameters(filterParamsCaptor.capture());
+        assertTrue(filterParamsCaptor.getValue().size() == 2);
+        assertTrue(filterParamsCaptor.getValue().get(FilterTypes.START_DATE).equals(new Date(2018, 2, 10)));
         assertTrue(filterParamsCaptor.getValue().get(FilterTypes.END_DATE).equals(new Date(2018, 9, 15)));
     }
 
