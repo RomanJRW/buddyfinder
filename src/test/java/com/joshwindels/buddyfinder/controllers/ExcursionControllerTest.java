@@ -531,6 +531,40 @@ public class ExcursionControllerTest {
         assertTrue(filterParamsCaptor.getValue().get(FilterTypes.MAX_ESTIMATED_COST).equals(50.00));
     }
 
+    @Test
+    public void givenAnExcursionRequest_whenProvidedWithMinRequiredBuddiesFilter_thenFilteredResultsAreReturned() {
+        ExcursionFilter filter = new ExcursionFilterBuilder().minRequiredBuddies(1).build();
+
+        excursionController.getExcursions(filter);
+        verify(excursionRepositoryMock, times(1)).getExcursionsMatchingFilterParameters(filterParamsCaptor.capture());
+        assertTrue(filterParamsCaptor.getValue().size() == 1);
+        assertTrue(filterParamsCaptor.getValue().get(FilterTypes.MIN_REQUIRED_BUDDIES).equals(1));
+    }
+
+    @Test
+    public void givenAnExcursionRequest_whenProvidedWithMaxRequiredBuddiesFilter_thenFilteredResultsAreReturned() {
+        ExcursionFilter filter = new ExcursionFilterBuilder().maxRequiredBuddies(4).build();
+
+        excursionController.getExcursions(filter);
+        verify(excursionRepositoryMock, times(1)).getExcursionsMatchingFilterParameters(filterParamsCaptor.capture());
+        assertTrue(filterParamsCaptor.getValue().size() == 1);
+        assertTrue(filterParamsCaptor.getValue().get(FilterTypes.MAX_REQUIRED_BUDDIES).equals(4));
+    }
+
+    @Test
+    public void givenAnExcursionRequest_whenProvidedWithMinAndMaxRequiredBuddiesFilter_thenFilteredResultsAreReturned() {
+        ExcursionFilter filter = new ExcursionFilterBuilder()
+                .minRequiredBuddies(1)
+                .maxRequiredBuddies(4)
+                .build();
+
+        excursionController.getExcursions(filter);
+        verify(excursionRepositoryMock, times(1)).getExcursionsMatchingFilterParameters(filterParamsCaptor.capture());
+        assertTrue(filterParamsCaptor.getValue().size() == 2);
+        assertTrue(filterParamsCaptor.getValue().get(FilterTypes.MIN_REQUIRED_BUDDIES).equals(1));
+        assertTrue(filterParamsCaptor.getValue().get(FilterTypes.MAX_REQUIRED_BUDDIES).equals(4));
+    }
+
     private ExcursionDTO getValidExcursionDTO() {
         return new ExcursionDTOBuilder()
                 .id(EXCURSION_ID)
