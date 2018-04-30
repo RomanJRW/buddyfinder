@@ -1,0 +1,14 @@
+package com.joshwindels.buddyfinder.helpers;
+
+public enum FilterTypes {
+    NAME_CONTAINS,
+    START_LOCATION_CONTAINS,
+    END_LOCATION_CONTAINS,
+    START_DATE,
+    END_DATE,
+    MIN_ESTIMATED_COST,
+    MAX_ESTIMATED_COST,
+    MIN_REQUIRED_BUDDIES,
+    MAX_REQUIRED_BUDDIES,
+    DESCRIPTION_CONTAINS
+}

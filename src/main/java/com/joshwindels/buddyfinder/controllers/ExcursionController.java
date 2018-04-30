@@ -1,15 +1,16 @@
 package com.joshwindels.buddyfinder.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import com.joshwindels.buddyfinder.dos.CurrentUser;
 import com.joshwindels.buddyfinder.dos.ExcursionDO;
 import com.joshwindels.buddyfinder.dtos.ExcursionDTO;
 import com.joshwindels.buddyfinder.filters.ExcursionFilter;
-import com.joshwindels.buddyfinder.helpers.ExcursionConverter;
+import com.joshwindels.buddyfinder.helpers.ExcursionHelper;
+import com.joshwindels.buddyfinder.helpers.FilterTypes;
 import com.joshwindels.buddyfinder.repositories.ExcursionRepository;
 import com.joshwindels.buddyfinder.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +35,7 @@ public class ExcursionController {
     @Autowired
     ExcursionRepository excursionRepository;
 
-    @Autowired
-    ExcursionConverter excursionConverter;
+    @Autowired ExcursionHelper excursionHelper;
 
 
     @PostMapping("/create")
@@ -45,7 +45,7 @@ public class ExcursionController {
             return validationErrorMessage.get();
         }
         excursionDTO.setOwnerId(currentUser.getId());
-        ExcursionDO excursionDO = excursionConverter.convertToDO(excursionDTO);
+        ExcursionDO excursionDO = excursionHelper.convertToDO(excursionDTO);
         excursionRepository.storeExcursion(excursionDO);
         return "excursion created";
     }
@@ -56,7 +56,7 @@ public class ExcursionController {
         if (validationErrorMessage.isPresent()) {
             return validationErrorMessage.get();
         }
-        ExcursionDO excursionDO = excursionConverter.convertToDO(excursionDTO);
+        ExcursionDO excursionDO = excursionHelper.convertToDO(excursionDTO);
         excursionRepository.updateExcursion(excursionDO);
         return "excursion updated";
     }
@@ -80,14 +80,15 @@ public class ExcursionController {
 
     @GetMapping("/get")
     public List<ExcursionDTO> getExcursions(ExcursionFilter filter) {
-        Map<String, Object> filterParams = extractFilterParametersFromFilter(filter);
+        Map<FilterTypes, Object> filterParams = excursionHelper.extractFilterParametersFromFilter(filter);
         List<ExcursionDO> excursions = excursionRepository.getExcursionsMatchingFilterParameters(filterParams);
-        return excursions.stream().map(excursionConverter::convertToDTO).collect(
-                Collectors.toList());
-    }
-
-    private Map<String, Object> extractFilterParametersFromFilter(ExcursionFilter filter) {
-        return null;
+        List<ExcursionDTO> detos = new ArrayList<>();
+        for (ExcursionDO exc : excursions) {
+            detos.add(excursionHelper.convertToDTO(exc));
+        }
+        return detos;
+        //return excursions.stream().map(excursionHelper::convertToDTO).collect(
+        //        Collectors.toList());
     }
 
     private Optional<String> getCreateExcursionErrorMessage(ExcursionDTO excursionDTO) {

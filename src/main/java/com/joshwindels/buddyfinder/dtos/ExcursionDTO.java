@@ -98,4 +98,25 @@ public class ExcursionDTO {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ExcursionDTO that = (ExcursionDTO) o;
+        return getId() == that.getId() &&
+                getOwnerId() == that.getOwnerId() &&
+                getName().equals(that.getName()) &&
+                getStartLocation().equals(that.getStartLocation()) &&
+                getEndLocation().equals(that.getEndLocation()) &&
+                getStartDate() == that.getStartDate() &&
+                getEndDate() == that.getEndDate() &&
+                getEstimatedCost() == that.getEstimatedCost() &&
+                getRequiredBuddies() == that.getRequiredBuddies() &&
+                getDescription() == that.getDescription();
+    }
 }

@@ -20,7 +20,7 @@ import com.joshwindels.buddyfinder.dos.ExcursionDOBuilder;
 import com.joshwindels.buddyfinder.dtos.ExcursionDTO;
 import com.joshwindels.buddyfinder.dtos.ExcursionDTOBuilder;
 import com.joshwindels.buddyfinder.filters.ExcursionFilter;
-import com.joshwindels.buddyfinder.helpers.ExcursionConverter;
+import com.joshwindels.buddyfinder.helpers.ExcursionHelper;
 import com.joshwindels.buddyfinder.repositories.ExcursionRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,8 +50,7 @@ public class ExcursionControllerTest {
     @Mock
     ExcursionRepository excursionRepositoryMock;
 
-    @Mock
-    ExcursionConverter excursionConverterMock;
+    @Mock ExcursionHelper excursionHelperMock;
 
     @InjectMocks
     ExcursionController excursionController;
@@ -60,7 +59,8 @@ public class ExcursionControllerTest {
     @Before
     public void setup() {
         when(currentUserMock.getUsername()).thenReturn(USERNAME);
-        when(excursionConverterMock.convertToDO(any(ExcursionDTO.class))).thenCallRealMethod();
+        when(excursionHelperMock.convertToDO(any(ExcursionDTO.class))).thenCallRealMethod();
+        when(excursionHelperMock.convertToDTO(any(ExcursionDO.class))).thenCallRealMethod();
     }
 
     @Test
@@ -421,14 +421,11 @@ public class ExcursionControllerTest {
     public void givenAnExcursionRequest_whenProvidedWithNoFilter_thenAllResultsAreReturned() {
         when(excursionRepositoryMock.getExcursionsMatchingFilterParameters(any(HashMap.class)))
                 .thenReturn(Arrays.asList(getValidExcursionDO(), getValidExcursionDO(), getValidExcursionDO()));
-        ExcursionDTO excursionA = getValidExcursionDTO();
-        ExcursionDTO excursionB = getValidExcursionDTO();
-        ExcursionDTO excursionC = getValidExcursionDTO();
         ExcursionFilter filter = new ExcursionFilter();
 
         List<ExcursionDTO> matchedExcursions = excursionController.getExcursions(filter);
         assertTrue(matchedExcursions.size() == 3);
-        assertTrue(matchedExcursions.containsAll(Arrays.asList(excursionA, excursionB, excursionC)));
+        assertTrue(matchedExcursions.containsAll(Arrays.asList(getValidExcursionDTO(), getValidExcursionDTO(), getValidExcursionDTO())));
     }
 
     private ExcursionDTO getValidExcursionDTO() {
