@@ -455,6 +455,17 @@ public class ExcursionControllerTest {
         assertTrue(filterParamsCaptor.getValue().get(FilterTypes.START_LOCATION_CONTAINS) == "city");
     }
 
+    @Test
+    public void givenAnExcursionRequest_whenProvidedWithEndLocationContainsFilter_thenFilteredResultsAreReturned() {
+        ExcursionFilter filter = new ExcursionFilterBuilder().endLocationContains("city").build();
+
+        excursionController.getExcursions(filter);
+        verify(excursionRepositoryMock, times(1)).getExcursionsMatchingFilterParameters(filterParamsCaptor.capture());
+        assertTrue(filterParamsCaptor.getValue().size() == 1);
+        assertTrue(filterParamsCaptor.getValue().containsKey(FilterTypes.END_LOCATION_CONTAINS));
+        assertTrue(filterParamsCaptor.getValue().get(FilterTypes.END_LOCATION_CONTAINS) == "city");
+    }
+
     private ExcursionDTO getValidExcursionDTO() {
         return new ExcursionDTOBuilder()
                 .id(EXCURSION_ID)
