@@ -441,7 +441,7 @@ public class ExcursionControllerTest {
         verify(excursionRepositoryMock, times(1)).getExcursionsMatchingFilterParameters(filterParamsCaptor.capture());
         assertTrue(filterParamsCaptor.getValue().size() == 1);
         assertTrue(filterParamsCaptor.getValue().containsKey(FilterTypes.NAME_CONTAINS));
-        assertTrue(filterParamsCaptor.getValue().get(FilterTypes.NAME_CONTAINS) == "fun");
+        assertTrue(filterParamsCaptor.getValue().get(FilterTypes.NAME_CONTAINS).equals("fun"));
     }
 
     @Test
@@ -452,7 +452,7 @@ public class ExcursionControllerTest {
         verify(excursionRepositoryMock, times(1)).getExcursionsMatchingFilterParameters(filterParamsCaptor.capture());
         assertTrue(filterParamsCaptor.getValue().size() == 1);
         assertTrue(filterParamsCaptor.getValue().containsKey(FilterTypes.START_LOCATION_CONTAINS));
-        assertTrue(filterParamsCaptor.getValue().get(FilterTypes.START_LOCATION_CONTAINS) == "city");
+        assertTrue(filterParamsCaptor.getValue().get(FilterTypes.START_LOCATION_CONTAINS).equals("city"));
     }
 
     @Test
@@ -463,7 +463,18 @@ public class ExcursionControllerTest {
         verify(excursionRepositoryMock, times(1)).getExcursionsMatchingFilterParameters(filterParamsCaptor.capture());
         assertTrue(filterParamsCaptor.getValue().size() == 1);
         assertTrue(filterParamsCaptor.getValue().containsKey(FilterTypes.END_LOCATION_CONTAINS));
-        assertTrue(filterParamsCaptor.getValue().get(FilterTypes.END_LOCATION_CONTAINS) == "city");
+        assertTrue(filterParamsCaptor.getValue().get(FilterTypes.END_LOCATION_CONTAINS).equals("city"));
+    }
+
+    @Test
+    public void givenAnExcursionRequest_whenProvidedWithStartDateContainsFilter_thenFilteredResultsAreReturned() {
+        ExcursionFilter filter = new ExcursionFilterBuilder().startDate(new Date(2018, 2, 10)).build();
+
+        excursionController.getExcursions(filter);
+        verify(excursionRepositoryMock, times(1)).getExcursionsMatchingFilterParameters(filterParamsCaptor.capture());
+        assertTrue(filterParamsCaptor.getValue().size() == 1);
+        assertTrue(filterParamsCaptor.getValue().containsKey(FilterTypes.START_DATE));
+        assertTrue(filterParamsCaptor.getValue().get(FilterTypes.START_DATE).equals(new Date(2018, 2, 10)));
     }
 
     private ExcursionDTO getValidExcursionDTO() {
