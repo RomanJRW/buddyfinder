@@ -25,6 +25,8 @@ import com.joshwindels.buddyfinder.repositories.ExcursionRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -50,10 +52,14 @@ public class ExcursionControllerTest {
     @Mock
     ExcursionRepository excursionRepositoryMock;
 
-    @Mock ExcursionHelper excursionHelperMock;
+    @Mock
+    ExcursionHelper excursionHelperMock;
 
     @InjectMocks
     ExcursionController excursionController;
+
+    @Captor
+    private ArgumentCaptor<HashMap> filterParamsCaptor;
 
 
     @Before
@@ -424,8 +430,10 @@ public class ExcursionControllerTest {
         ExcursionFilter filter = new ExcursionFilter();
 
         List<ExcursionDTO> matchedExcursions = excursionController.getExcursions(filter);
+        verify(excursionRepositoryMock, times(1)).getExcursionsMatchingFilterParameters(filterParamsCaptor.capture());
         assertTrue(matchedExcursions.size() == 3);
         assertTrue(matchedExcursions.containsAll(Arrays.asList(getValidExcursionDTO(), getValidExcursionDTO(), getValidExcursionDTO())));
+        assertTrue(filterParamsCaptor.getValue().isEmpty());
     }
 
     private ExcursionDTO getValidExcursionDTO() {
