@@ -8,10 +8,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
 
 import com.joshwindels.buddyfinder.dos.CurrentUser;
@@ -20,7 +18,9 @@ import com.joshwindels.buddyfinder.dos.ExcursionDOBuilder;
 import com.joshwindels.buddyfinder.dtos.ExcursionDTO;
 import com.joshwindels.buddyfinder.dtos.ExcursionDTOBuilder;
 import com.joshwindels.buddyfinder.filters.ExcursionFilter;
+import com.joshwindels.buddyfinder.filters.ExcursionFilterBuilder;
 import com.joshwindels.buddyfinder.helpers.ExcursionHelper;
+import com.joshwindels.buddyfinder.helpers.FilterTypes;
 import com.joshwindels.buddyfinder.repositories.ExcursionRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -67,6 +67,7 @@ public class ExcursionControllerTest {
         when(currentUserMock.getUsername()).thenReturn(USERNAME);
         when(excursionHelperMock.convertToDO(any(ExcursionDTO.class))).thenCallRealMethod();
         when(excursionHelperMock.convertToDTO(any(ExcursionDO.class))).thenCallRealMethod();
+        when(excursionHelperMock.extractFilterParametersFromFilter(any(ExcursionFilter.class))).thenCallRealMethod();
     }
 
     @Test
@@ -425,15 +426,22 @@ public class ExcursionControllerTest {
 
     @Test
     public void givenAnExcursionRequest_whenProvidedWithNoFilter_thenAllResultsAreReturned() {
-        when(excursionRepositoryMock.getExcursionsMatchingFilterParameters(any(HashMap.class)))
-                .thenReturn(Arrays.asList(getValidExcursionDO(), getValidExcursionDO(), getValidExcursionDO()));
         ExcursionFilter filter = new ExcursionFilter();
 
-        List<ExcursionDTO> matchedExcursions = excursionController.getExcursions(filter);
+        excursionController.getExcursions(filter);
         verify(excursionRepositoryMock, times(1)).getExcursionsMatchingFilterParameters(filterParamsCaptor.capture());
-        assertTrue(matchedExcursions.size() == 3);
-        assertTrue(matchedExcursions.containsAll(Arrays.asList(getValidExcursionDTO(), getValidExcursionDTO(), getValidExcursionDTO())));
         assertTrue(filterParamsCaptor.getValue().isEmpty());
+    }
+
+    @Test
+    public void givenAnExcursionRequest_whenProvidedWithNameContainsFilter_thenFilteredResultsAreReturned() {
+        ExcursionFilter filter = new ExcursionFilterBuilder().nameContains("fun").build();
+
+        excursionController.getExcursions(filter);
+        verify(excursionRepositoryMock, times(1)).getExcursionsMatchingFilterParameters(filterParamsCaptor.capture());
+        assertTrue(filterParamsCaptor.getValue().size() == 1);
+        assertTrue(filterParamsCaptor.getValue().containsKey(FilterTypes.NAME_CONTAINS));
+        assertTrue(filterParamsCaptor.getValue().get(FilterTypes.NAME_CONTAINS) == "fun");
     }
 
     private ExcursionDTO getValidExcursionDTO() {
