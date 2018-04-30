@@ -517,6 +517,20 @@ public class ExcursionControllerTest {
         assertTrue(filterParamsCaptor.getValue().get(FilterTypes.MAX_ESTIMATED_COST).equals(50.00));
     }
 
+    @Test
+    public void givenAnExcursionRequest_whenProvidedWithMinAndMaxEstimatedCostFilter_thenFilteredResultsAreReturned() {
+        ExcursionFilter filter = new ExcursionFilterBuilder()
+                .minEstimatedCost(10.00)
+                .maxEstimatedCost(50.00)
+                .build();
+
+        excursionController.getExcursions(filter);
+        verify(excursionRepositoryMock, times(1)).getExcursionsMatchingFilterParameters(filterParamsCaptor.capture());
+        assertTrue(filterParamsCaptor.getValue().size() == 2);
+        assertTrue(filterParamsCaptor.getValue().get(FilterTypes.MIN_ESTIMATED_COST).equals(10.00));
+        assertTrue(filterParamsCaptor.getValue().get(FilterTypes.MAX_ESTIMATED_COST).equals(50.00));
+    }
+
     private ExcursionDTO getValidExcursionDTO() {
         return new ExcursionDTOBuilder()
                 .id(EXCURSION_ID)
