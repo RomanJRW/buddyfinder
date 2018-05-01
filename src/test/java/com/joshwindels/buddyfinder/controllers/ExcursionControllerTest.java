@@ -577,6 +577,16 @@ public class ExcursionControllerTest {
         verifyFilterError(filter, "maximum estimated cost must be greater or equal to minimum estimated cost");
     }
 
+    @Test(expected = RuntimeException.class)
+    public void givenAnExcursionRequest_whenFilterMinBuddiesIsGreaterThanMaxBuddies_thenErrorMessageIsReturned() {
+        ExcursionFilter filter = new ExcursionFilterBuilder()
+                .minRequiredBuddies(2)
+                .maxRequiredBuddies(1)
+                .build();
+
+        verifyFilterError(filter, "maximum required buddies must be greater or equal to minimum required buddies");
+    }
+
 
     private ExcursionDTO getValidExcursionDTO() {
         return new ExcursionDTOBuilder()
