@@ -56,7 +56,7 @@ public class AuthenticationController {
             throw new RuntimeException("username not found");
         } else if (authenticationHelper.isValidAuthenticationDetails(userDTO.getPassword(), storedPassword)) {
             currentUser.setUsername(userDTO.getUsername());
-            currentUser.setId(userRepository.getIfForUsername(userDTO.getUsername()));
+            currentUser.setId(userRepository.getIdForUsername(userDTO.getUsername()));
             return "authentication successful";
         } else {
             throw new RuntimeException("incorrect password");
