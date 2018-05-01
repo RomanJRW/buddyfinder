@@ -587,6 +587,16 @@ public class ExcursionControllerTest {
         verifyFilterError(filter, "maximum required buddies must be greater or equal to minimum required buddies");
     }
 
+    @Test(expected = RuntimeException.class)
+    public void givenUnauthenticatedUser_whenRequestingExcursionsWithFilter_thenErrorMessageIsReturned() {
+        when(currentUserMock.getUsername()).thenReturn(null);
+        ExcursionFilter filter = new ExcursionFilterBuilder()
+                .maxRequiredBuddies(1)
+                .build();
+
+        verifyFilterError(filter, "not authenticated");
+    }
+
 
     private ExcursionDTO getValidExcursionDTO() {
         return new ExcursionDTOBuilder()
