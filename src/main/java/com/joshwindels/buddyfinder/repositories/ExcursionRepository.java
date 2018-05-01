@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import com.joshwindels.buddyfinder.dos.ExcursionDO;
 import com.joshwindels.buddyfinder.helpers.FilterTypes;
+import com.joshwindels.buddyfinder.rowmappers.ExcursionRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -17,6 +18,9 @@ public class ExcursionRepository {
 
     @Autowired
     NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    @Autowired
+    ExcursionRowMapper excursionRowMapper;
 
     public void storeExcursion(ExcursionDO excursionDO) {
         String sql = " INSERT INTO excursions (owner_id, name, start_location, finish_location, "
@@ -47,19 +51,23 @@ public class ExcursionRepository {
     }
 
     public Optional<ExcursionDO> getExcursionForId(int excursionId) {
-        String sql = " SELECT * FROM excursions where id = :id LIMIT 1 ";
+        String sql = " SELECT * FROM excursions WHERE id = :id LIMIT 1 ";
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("id", excursionId);
         try {
-            return namedParameterJdbcTemplate.queryForObject(sql, params, excursionRowMapper);
+            return Optional.of((ExcursionDO) namedParameterJdbcTemplate.queryForObject(sql, params, excursionRowMapper));
         } catch (EmptyResultDataAccessException ex) {
             return Optional.empty();
         }
     }
 
     public void deleteExcursion(int excursionId) {
+        String sql = " DELETE FROM excursions WHERE id = :id LIMIT 1 ";
 
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("id", excursionId);
+        namedParameterJdbcTemplate.update(sql, params);
     }
 
     public List<ExcursionDO> getExcursionsMatchingFilterParameters(Map<FilterTypes, Object> filterParameters) {
