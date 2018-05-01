@@ -56,7 +56,7 @@ public class ExcursionRepository {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("id", excursionId);
         try {
-            return Optional.of((ExcursionDO) namedParameterJdbcTemplate.queryForObject(sql, params, excursionRowMapper));
+            return Optional.of(namedParameterJdbcTemplate.queryForObject(sql, params, ExcursionDO.class));
         } catch (EmptyResultDataAccessException ex) {
             return Optional.empty();
         }
@@ -71,7 +71,52 @@ public class ExcursionRepository {
     }
 
     public List<ExcursionDO> getExcursionsMatchingFilterParameters(Map<FilterTypes, Object> filterParameters) {
-        return null;
+        String sql = " SELECT * FROM excursions ";
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        if (!filterParameters.isEmpty()) {
+            sql = sql + " WHERE id > 0 ";
+            if (filterParameters.containsKey(FilterTypes.NAME_CONTAINS)) {
+                sql = sql + " AND name LIKE '%:name%' ";
+                params.addValue("name", filterParameters.get(FilterTypes.NAME_CONTAINS));
+            }
+            if (filterParameters.containsKey(FilterTypes.START_LOCATION_CONTAINS)) {
+                sql = sql + " AND start_location LIKE '%:start_location%' ";
+                params.addValue("start_location", filterParameters.get(FilterTypes.START_LOCATION_CONTAINS));
+            }
+            if (filterParameters.containsKey(FilterTypes.END_LOCATION_CONTAINS)) {
+                sql = sql + " AND finish_location LIKE '%:finish_location%' ";
+                params.addValue("finish_location", filterParameters.get(FilterTypes.END_LOCATION_CONTAINS));
+            }
+            if (filterParameters.containsKey(FilterTypes.START_DATE)) {
+                sql = sql + " AND start_date >= :start_date ";
+                params.addValue("start_date", filterParameters.get(FilterTypes.START_DATE));
+            }
+            if (filterParameters.containsKey(FilterTypes.END_DATE)) {
+                sql = sql + " AND end_date <= :end_date ";
+                params.addValue("end_date", filterParameters.get(FilterTypes.END_DATE));
+            }
+            if (filterParameters.containsKey(FilterTypes.MIN_ESTIMATED_COST)) {
+                sql = sql + " AND estimated_cost >= :min_estimated_cost ";
+                params.addValue("min_estimated_cost", filterParameters.get(FilterTypes.MIN_ESTIMATED_COST));
+            }
+            if (filterParameters.containsKey(FilterTypes.MAX_ESTIMATED_COST)) {
+                sql = sql + " AND estimated_cost <= :max_estimated_cost ";
+                params.addValue("max_estimated_cost", filterParameters.get(FilterTypes.MAX_ESTIMATED_COST));
+            }
+            if (filterParameters.containsKey(FilterTypes.MIN_REQUIRED_BUDDIES)) {
+                sql = sql + " AND required_buddies >= :min_required_buddies ";
+                params.addValue("min_required_buddies", filterParameters.get(FilterTypes.MIN_REQUIRED_BUDDIES));
+            }
+            if (filterParameters.containsKey(FilterTypes.MAX_REQUIRED_BUDDIES)) {
+                sql = sql + " AND required_buddies <= :max_required_buddies ";
+                params.addValue("max_required_buddies", filterParameters.get(FilterTypes.MAX_REQUIRED_BUDDIES));
+            }
+            if (filterParameters.containsKey(FilterTypes.DESCRIPTION_CONTAINS)) {
+                sql = sql + " AND description LIKE '%:description_contains%' ";
+                params.addValue("description_contains", filterParameters.get(FilterTypes.DESCRIPTION_CONTAINS));
+            }
+        }
+        return namedParameterJdbcTemplate.queryForList(sql, params, ExcursionDO.class);
     }
 
     private MapSqlParameterSource getParameters(ExcursionDO excursionDO) {
