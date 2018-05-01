@@ -597,6 +597,13 @@ public class ExcursionControllerTest {
         verifyFilterError(filter, "not authenticated");
     }
 
+    @Test(expected = RuntimeException.class)
+    public void givenUnauthenticatedUser_whenRequestingExcursionsWithNoFilter_thenErrorMessageIsReturned() {
+        when(currentUserMock.getUsername()).thenReturn(null);
+
+        verifyFilterError(new ExcursionFilter(), "not authenticated");
+    }
+
 
     private ExcursionDTO getValidExcursionDTO() {
         return new ExcursionDTOBuilder()
