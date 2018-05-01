@@ -87,6 +87,9 @@ public class ExcursionController {
         } else if ((filter.getMinEstimatedCost() != null && filter.getMaxEstimatedCost() != null)
                 && (filter.getMinEstimatedCost() > filter.getMaxEstimatedCost())) {
             throw new RuntimeException("maximum estimated cost must be greater or equal to minimum estimated cost");
+        } else if ((filter.getMinRequiredBuddies() != null && filter.getMaxRequiredBuddies() != null)
+                && (filter.getMinRequiredBuddies() > filter.getMaxRequiredBuddies())) {
+            throw new RuntimeException("maximum required buddies must be greater or equal to minimum required buddies");
         }
     }
 
