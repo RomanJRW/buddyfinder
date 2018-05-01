@@ -2,9 +2,11 @@ package com.joshwindels.buddyfinder.controllers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -51,145 +53,143 @@ public class AuthenticationControllerTest {
         when(authenticationHelper.telephoneNumberIsValid(anyString())).thenCallRealMethod();
         when(authenticationHelper.isValidAuthenticationDetails(anyString(), anyString())).thenCallRealMethod();
         when(authenticationHelper.getEncryptedPassword(anyString())).thenCallRealMethod();
-        when(authenticationHelper.getValidationErrorMessage(any(UserDTO.class))).thenCallRealMethod();
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void givenBlankUsername_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto("", "Pa55word", "test@example.com", "01234 567890");
+        doThrow(new RuntimeException("invalid username")).when(authenticationHelper).validateUser(any(UserDTO.class));
 
-        assertEquals("invalid username", authenticationController.registerUser(userDTO));
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
+        verifyRegistrationError(userDTO, "invalid username");
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void givenShortUsername_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto("SevenLe", "Pa55word", "test@example.com", "01234 567890");
+        doThrow(new RuntimeException("invalid username")).when(authenticationHelper).validateUser(any(UserDTO.class));
 
-        assertEquals("invalid username", authenticationController.registerUser(userDTO));
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
+        verifyRegistrationError(userDTO, "invalid username");
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void givenNoUsername_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto(null, "Pa55word", "test@example.com", "01234 567890");
+        doThrow(new RuntimeException("invalid username")).when(authenticationHelper).validateUser(any(UserDTO.class));
 
-        assertEquals("invalid username", authenticationController.registerUser(userDTO));
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
+        verifyRegistrationError(userDTO, "invalid username");
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void givenShortPassword_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto("username", "pw", "test@example.com", "01234 567890");
+        doThrow(new RuntimeException("invalid password")).when(authenticationHelper).validateUser(any(UserDTO.class));
 
-        assertEquals("invalid password", authenticationController.registerUser(userDTO));
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
+        verifyRegistrationError(userDTO, "invalid password");
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void givenNoUpperPassword_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto("username", "pa55word", "test@example.com", "01234 567890");
+        doThrow(new RuntimeException("invalid password")).when(authenticationHelper).validateUser(any(UserDTO.class));
 
-        assertEquals("invalid password", authenticationController.registerUser(userDTO));
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
+        verifyRegistrationError(userDTO, "invalid password");
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void givenNoLowerCasePassword_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto("username", "PA55WORD", "test@example.com", "01234 567890");
+        doThrow(new RuntimeException("invalid password")).when(authenticationHelper).validateUser(any(UserDTO.class));
 
-        assertEquals("invalid password", authenticationController.registerUser(userDTO));
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
+        verifyRegistrationError(userDTO, "invalid password");
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void givenNoNumberPassword_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto("username", "Password", "test@example.com", "01234 567890");
+        doThrow(new RuntimeException("invalid password")).when(authenticationHelper).validateUser(any(UserDTO.class));
 
-        assertEquals("invalid password", authenticationController.registerUser(userDTO));
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
+        verifyRegistrationError(userDTO, "invalid password");
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void givenNoPassword_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto("username", null, "test@example.com", "01234 567890");
+        doThrow(new RuntimeException("invalid password")).when(authenticationHelper).validateUser(any(UserDTO.class));
 
-        assertEquals("invalid password", authenticationController.registerUser(userDTO));
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
+        verifyRegistrationError(userDTO, "invalid password");
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void givenSimpleStringEmailAddress_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto("username", "Pa55word", "test", "01234 567890");
+        doThrow(new RuntimeException("invalid email address")).when(authenticationHelper).validateUser(any(UserDTO.class));
 
-        assertEquals("invalid email address", authenticationController.registerUser(userDTO));
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
+        verifyRegistrationError(userDTO, "invalid email address");
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void givenNoDomainEmailAddress_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto("username", "Pa55word", "test@", "01234 567890");
+        doThrow(new RuntimeException("invalid email address")).when(authenticationHelper).validateUser(any(UserDTO.class));
 
-        assertEquals("invalid email address", authenticationController.registerUser(userDTO));
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
+        verifyRegistrationError(userDTO, "invalid email address");
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void givenNoTLDEmailAddress_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto("username", "Pa55word", "test@example", "01234 567890");
+        doThrow(new RuntimeException("invalid email address")).when(authenticationHelper).validateUser(any(UserDTO.class));
 
-        assertEquals("invalid email address", authenticationController.registerUser(userDTO));
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
+        verifyRegistrationError(userDTO, "invalid email address");
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void givenNoLocalPartEmailAddress_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto("username", "Pa55word", "@example.com", "01234 567890");
+        doThrow(new RuntimeException("invalid email address")).when(authenticationHelper).validateUser(any(UserDTO.class));
 
-        assertEquals("invalid email address", authenticationController.registerUser(userDTO));
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
+        verifyRegistrationError(userDTO, "invalid email address");
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void givenNoEmailAddress_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto("username", "Pa55word", null, "01234 567890");
+        doThrow(new RuntimeException("invalid email address")).when(authenticationHelper).validateUser(any(UserDTO.class));
 
-        assertEquals("invalid email address", authenticationController.registerUser(userDTO));
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
+        verifyRegistrationError(userDTO, "invalid email address");
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void givenEmptyTelephoneNumber_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto("username", "Pa55word", "test@example.com", "");
+        doThrow(new RuntimeException("invalid telephone number")).when(authenticationHelper).validateUser(any(UserDTO.class));
 
-        assertEquals("invalid telephone number", authenticationController.registerUser(userDTO));
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
+        verifyRegistrationError(userDTO, "invalid telephone number");
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void givenCharacterStringTelephoneNumber_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto("username", "Pa55word", "test@example.com", "abcdefghi");
+        doThrow(new RuntimeException("invalid telephone number")).when(authenticationHelper).validateUser(any(UserDTO.class));
 
-        assertEquals("invalid telephone number", authenticationController.registerUser(userDTO));
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
+        verifyRegistrationError(userDTO, "invalid telephone number");
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void givenNoTelephoneNumber_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         UserDTO userDTO = makeUserDto("username", "Pa55word", "test@example.com", null);
+        doThrow(new RuntimeException("invalid telephone number")).when(authenticationHelper).validateUser(any(UserDTO.class));
 
-        assertEquals("invalid telephone number", authenticationController.registerUser(userDTO));
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
+        verifyRegistrationError(userDTO, "invalid telephone number");
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void givenUnavailableUsername_whenRegisteringNewUser_thenDetailsNotStoredAndErrorMessageReturned() {
         when(userRepositoryMock.userNameIsAvailable("alreadyTaken")).thenReturn(false);
 
         UserDTO userDTO = makeUserDto("alreadyTaken", "Pa55word", "test@example.com", "01234 567890");
 
-        assertEquals("username unavailable", authenticationController.registerUser(userDTO));
-        verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
+        verifyRegistrationError(userDTO, "username unavailable");
     }
 
     @Test
@@ -223,26 +223,22 @@ public class AuthenticationControllerTest {
         verify(currentUserMock, times(1)).setUsername("username");
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void givenAuthenticationDetailsForUnregisteredUser_whenAuthenticating_thenErrorMessageIsReturned() {
         UserDTO userDTO = makeUserDto("username", "Pa55word", null, null);
 
         when(userRepositoryMock.getStoredPasswordForUser("username")).thenReturn(null);
 
-        assertEquals("username not found", authenticationController.authenticateUser(userDTO));
-        verify(userRepositoryMock, times(1)).getStoredPasswordForUser(eq("username"));
-        verify(currentUserMock, times(0)).setUsername("username");
+        verifyAuthenticationError(userDTO, "username not found");
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void givenIncorrectAuthenticationDetailsForRegisteredUser_whenAuthenticating_thenErrorMessageIsReturned() {
         UserDTO userDTO = makeUserDto("username", "1ncorrectPa55word", null, null);
 
         when(userRepositoryMock.getStoredPasswordForUser("username")).thenReturn(ENCRYPTED_PASSWORD);
 
-        assertEquals("incorrect password", authenticationController.authenticateUser(userDTO));
-        verify(userRepositoryMock, times(1)).getStoredPasswordForUser(eq("username"));
-        verify(currentUserMock, times(0)).setUsername("username");
+        verifyAuthenticationError(userDTO, "incorrect password");
     }
 
     @Test
@@ -263,40 +259,36 @@ public class AuthenticationControllerTest {
         verifyDtoUpdatedvalues(userDTO);
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void givenAuthenticatedUser_whenUpdatingWithInvalidEmailAdd_thenNotStoredAndErrorMessageIsReturned() {
         when(currentUserMock.getUsername()).thenReturn("username");
         UserDTO userDTO = makeUserDto("username", null, "newtest", null);
 
-        assertEquals("invalid email address", authenticationController.updateUserDetails(userDTO));
-        verify(userRepositoryMock, times(0)).updateUser(any(UserDO.class));
+        verifyUpdateError(userDTO, "invalid email address");
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void givenAuthenticatedUser_whenUpdatingWithNoDomainEmailAdd_thenNotStoredAndErrorMessageIsReturned() {
         when(currentUserMock.getUsername()).thenReturn("username");
         UserDTO userDTO = makeUserDto("username", null, "newtest@", null);
 
-        assertEquals("invalid email address", authenticationController.updateUserDetails(userDTO));
-        verify(userRepositoryMock, times(0)).updateUser(any(UserDO.class));
+        verifyUpdateError(userDTO, "invalid email address");
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void givenAuthenticatedUser_whenUpdatingWithNoTLDEmailAdd_thenNotStoredAndErrorMessageIsReturned() {
         when(currentUserMock.getUsername()).thenReturn("username");
         UserDTO userDTO = makeUserDto("username", null, "newtest@example", null);
 
-        assertEquals("invalid email address", authenticationController.updateUserDetails(userDTO));
-        verify(userRepositoryMock, times(0)).updateUser(any(UserDO.class));
+        verifyUpdateError(userDTO, "invalid email address");
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void givenAuthenticatedUser_whenUpdatingWithNoFirstPartEmailAdd_thenNotStoredAndErrorMessageIsReturned() {
         when(currentUserMock.getUsername()).thenReturn("username");
         UserDTO userDTO = makeUserDto("username", null, "@example.com", null);
 
-        assertEquals("invalid email address", authenticationController.updateUserDetails(userDTO));
-        verify(userRepositoryMock, times(0)).updateUser(any(UserDO.class));
+        verifyUpdateError(userDTO, "invalid email address");
     }
 
     @Test
@@ -317,56 +309,51 @@ public class AuthenticationControllerTest {
         verifyDtoUpdatedvalues(userDTO);
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void givenAuthenticatedUser_whenUpdatingWithInvalidTelNo_thenNotStoredAndErrorMessageIsReturned() {
         when(currentUserMock.getUsername()).thenReturn("username");
         UserDTO userDTO = makeUserDto("username", null, null, "asdfgh");
 
-        assertEquals("invalid telephone number", authenticationController.updateUserDetails(userDTO));
-        verify(userRepositoryMock, times(0)).updateUser(any(UserDO.class));
+        verifyUpdateError(userDTO, "invalid telephone number");
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void givenUnauthenticatedUser_whenUpdatingEmailAddAndTelNo_thenNotStoredAndErrorMessageIsReturned() {
         when(currentUserMock.getUsername()).thenReturn(null);
         UserDTO userDTO = makeUserDto("username", null, "newtest@example.com", "+449876 543210");
 
-        assertEquals("not authenticated", authenticationController.updateUserDetails(userDTO));
-        verify(userRepositoryMock, times(0)).updateUser(any(UserDO.class));
+        verifyUpdateError(userDTO, "not authenticated");
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void givenUnauthenticatedUser_whenUpdatingEmailAdd_thenNotStoredAndErrorMessageIsReturned() {
         when(currentUserMock.getUsername()).thenReturn(null);
         UserDTO userDTO = makeUserDto("username", null, "newtest@example.com", null);
 
-        assertEquals("not authenticated", authenticationController.updateUserDetails(userDTO));
-        verify(userRepositoryMock, times(0)).updateUser(any(UserDO.class));
+        verifyUpdateError(userDTO, "not authenticated");
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void givenUnauthenticatedUser_whenUpdatingTelNo_thenNotStoredAndErrorMessageIsReturned() {
         when(currentUserMock.getUsername()).thenReturn(null);
         UserDTO userDTO = makeUserDto("username", null, null, "+449876 543210");
 
-        assertEquals("not authenticated", authenticationController.updateUserDetails(userDTO));
-        verify(userRepositoryMock, times(0)).updateUser(any(UserDO.class));
+        verifyUpdateError(userDTO, "not authenticated");
     }
 
     @Test
     public void givenAuthenticatedUser_whenDeauthenticating_userIsDeauthenticatedAndSuccessMessageIsReturned() {
         when(currentUserMock.getUsername()).thenReturn("username");
 
-        assertEquals("deauthenticated", authenticationController.deuathenticateUser("username"));
+        assertEquals("deauthenticated", authenticationController.deuathenticateUser());
         verify(currentUserMock, times(1)).setUsername(null);
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void givenUnauthenticatedUser_whenDeauthenticating_errorMessageIsReturned() {
         when(currentUserMock.getUsername()).thenReturn(null);
 
-        assertEquals("not authenticated", authenticationController.deuathenticateUser("username"));
-        verify(currentUserMock, times(0)).setUsername(null);
+        verifyDeauthenticationError("not authenticated");
     }
 
     private void verifyDtoStoredvalues(UserDTO userDTO) {
@@ -393,5 +380,51 @@ public class AuthenticationControllerTest {
         userDTO.setEmailAddress(emailAddress);
         userDTO.setTelephoneNumber(telephoneNumber);
         return userDTO;
+    }
+
+    private void verifyRegistrationError(UserDTO userDTO, String errorMessage) {
+        try {
+            authenticationController.registerUser(userDTO);
+        } catch (RuntimeException ex) {
+            assertEquals(errorMessage, ex.getMessage());
+            verify(userRepositoryMock, never()).storeUser(any(UserDO.class));
+            throw ex;
+        }
+        fail("expected Exception wasn't thrown");
+    }
+
+
+    private void verifyAuthenticationError(UserDTO userDTO, String errorMessage) {
+        try {
+            authenticationController.authenticateUser(userDTO);
+        } catch (RuntimeException ex) {
+            assertEquals(errorMessage, ex.getMessage());
+            verify(userRepositoryMock, times(1)).getStoredPasswordForUser(eq("username"));
+            verify(currentUserMock, times(0)).setUsername("username");
+            throw ex;
+        }
+        fail("expected Exception wasn't thrown");
+    }
+
+    private void verifyUpdateError(UserDTO userDTO, String errorMessage) {
+        try {
+            authenticationController.updateUserDetails(userDTO);
+        } catch (RuntimeException ex) {
+            assertEquals(errorMessage, ex.getMessage());
+            verify(userRepositoryMock, times(0)).updateUser(any(UserDO.class));
+            throw ex;
+        }
+        fail("expected Exception wasn't thrown");
+    }
+
+    private void verifyDeauthenticationError(String errorMessage) {
+        try {
+            authenticationController.deuathenticateUser();
+        } catch (RuntimeException ex) {
+            assertEquals(errorMessage, ex.getMessage());
+            verify(currentUserMock, times(0)).setUsername(null);
+            throw ex;
+        }
+        fail("expected Exception wasn't thrown");
     }
 }

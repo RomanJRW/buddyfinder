@@ -1,7 +1,5 @@
 package com.joshwindels.buddyfinder.controllers;
 
-import java.util.Optional;
-
 import com.joshwindels.buddyfinder.dos.CurrentUser;
 import com.joshwindels.buddyfinder.dos.UserDO;
 import com.joshwindels.buddyfinder.dtos.UserDTO;
@@ -29,13 +27,10 @@ public class AuthenticationController {
 
     @PostMapping("/create")
     public @ResponseBody String registerUser(UserDTO userDTO) {
-        Optional<String> validationErrorMessage = authenticationHelper.getValidationErrorMessage(userDTO);
-        if (validationErrorMessage.isPresent()) {
-            return validationErrorMessage.get();
-        } else if (!userRepository.userNameIsAvailable(userDTO.getUsername())) {
-            return "username unavailable";
+        authenticationHelper.validateUser(userDTO);
+        if (!userRepository.userNameIsAvailable(userDTO.getUsername())) {
+            throw new RuntimeException("username unavailable");
         }
-
         UserDO userDO = authenticationHelper.convertToUserDO(userDTO);
         userRepository.storeUser(userDO);
         return "registration successful";
@@ -43,13 +38,11 @@ public class AuthenticationController {
 
     @PatchMapping("/edit")
     public @ResponseBody String updateUserDetails(UserDTO userDTO) {
-        if (currentUser.getUsername() == null || !currentUser.getUsername().equals(userDTO.getUsername())) {
-            return "not authenticated";
-        }
+        checkAuthentication();
         if (userDTO.getEmailAddress() != null && !authenticationHelper.emailAddressIsValid(userDTO.getEmailAddress())) {
-            return "invalid email address";
+            throw new RuntimeException("invalid email address");
         } else if (userDTO.getTelephoneNumber() != null && !authenticationHelper.telephoneNumberIsValid(userDTO.getTelephoneNumber())) {
-            return "invalid telephone number";
+            throw new RuntimeException("invalid telephone number");
         } else {
             userRepository.updateUser(authenticationHelper.convertToUserDO(userDTO));
             return "account updated successfully";
@@ -60,24 +53,29 @@ public class AuthenticationController {
     public @ResponseBody String authenticateUser(UserDTO userDTO) {
         String storedPassword = userRepository.getStoredPasswordForUser(userDTO.getUsername());
         if (storedPassword == null) {
-            return "username not found";
+            throw new RuntimeException("username not found");
         } else if (authenticationHelper.isValidAuthenticationDetails(userDTO.getPassword(), storedPassword)) {
             currentUser.setUsername(userDTO.getUsername());
             currentUser.setId(userRepository.getIfForUsername(userDTO.getUsername()));
             return "authentication successful";
         } else {
-            return "incorrect password";
+            throw new RuntimeException("incorrect password");
         }
     }
 
     @GetMapping("/deauth")
-    public @ResponseBody String deuathenticateUser(String username) {
-        if (currentUser.getUsername() == null || !currentUser.getUsername().equals(username)) {
-            return "not authenticated";
-        } else {
-            currentUser.setUsername(null);
-            currentUser.setId(-1);
-            return "deauthenticated";
+    public @ResponseBody String deuathenticateUser() {
+        checkAuthentication();
+
+        currentUser.setUsername(null);
+        currentUser.setId(-1);
+        return "deauthenticated";
+
+    }
+
+    private void checkAuthentication() {
+        if (currentUser.getUsername() == null) {
+            throw new RuntimeException("not authenticated");
         }
     }
 }

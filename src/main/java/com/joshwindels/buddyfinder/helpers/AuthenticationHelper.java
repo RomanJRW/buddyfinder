@@ -1,7 +1,6 @@
 package com.joshwindels.buddyfinder.helpers;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.Optional;
 
 import com.amdelamar.jhash.Hash;
 import com.amdelamar.jhash.exception.BadOperationException;
@@ -44,18 +43,16 @@ public class AuthenticationHelper {
         }
     }
 
-    public Optional<String> getValidationErrorMessage(UserDTO userDTO) {
+    public void validateUser(UserDTO userDTO) {
         if (!usernameIsValid(userDTO.getUsername())) {
-            return Optional.of("invalid username");
+            throw new RuntimeException("invalid username");
         } else if (!passwordIsValid(userDTO.getPassword())) {
-            return Optional.of("invalid password");
+            throw new RuntimeException("invalid password");
         } else if (!emailAddressIsValid(userDTO.getEmailAddress())) {
-            return Optional.of("invalid email address");
+            throw new RuntimeException("invalid email address");
         } else if (!telephoneNumberIsValid(userDTO.getTelephoneNumber())) {
-            return Optional.of("invalid telephone number");
+            throw new RuntimeException("invalid telephone number");
         }
-
-        return Optional.empty();
     }
 
     private boolean usernameIsValid(String username) {
