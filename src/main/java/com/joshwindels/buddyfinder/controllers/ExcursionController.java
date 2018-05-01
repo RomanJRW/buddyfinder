@@ -40,10 +40,7 @@ public class ExcursionController {
 
     @PostMapping("/create")
     public @ResponseBody String createExcursion(ExcursionDTO excursionDTO) {
-        Optional<String> validationErrorMessage = getCreateExcursionErrorMessage(excursionDTO);
-        if (validationErrorMessage.isPresent()) {
-            return validationErrorMessage.get();
-        }
+        validateNewExcursion(excursionDTO);
         excursionDTO.setOwnerId(currentUser.getId());
         ExcursionDO excursionDO = excursionHelper.convertToDO(excursionDTO);
         excursionRepository.storeExcursion(excursionDO);
@@ -52,10 +49,7 @@ public class ExcursionController {
 
     @PatchMapping("/update")
     public String updateExcursion(ExcursionDTO excursionDTO) {
-        Optional<String> validationErrorMessage = getUpdateExcursionErrorMessage(excursionDTO);
-        if (validationErrorMessage.isPresent()) {
-            return validationErrorMessage.get();
-        }
+        validateUpdateExcursion(excursionDTO);
         ExcursionDO excursionDO = excursionHelper.convertToDO(excursionDTO);
         excursionRepository.updateExcursion(excursionDO);
         return "excursion updated";
@@ -63,86 +57,74 @@ public class ExcursionController {
 
     @DeleteMapping("/delete")
     public String deleteExcursion(int excursionId) {
-        if (currentUser.getUsername() == null) {
-            return "not authenticated";
-        }
+        checkAuthentication();
         Optional<ExcursionDO> storedExcursion = excursionRepository.getExcursionForId(excursionId);
         if (storedExcursion.isPresent()) {
             if (storedExcursion.get().getOwnerId() == currentUser.getId()) {
                 excursionRepository.deleteExcursion(excursionId);
                 return "excursion deleted";
             }
-            return "user doesn't have permission to delete excursion";
+            throw new RuntimeException("user doesn't have permission to delete excursion");
         } else {
-            return "excursion does not exist";
+            throw new RuntimeException("excursion does not exist");
         }
     }
 
     @GetMapping("/get")
     public List<ExcursionDTO> getExcursions(ExcursionFilter filter) {
-        if (currentUser.getUsername() == null) {
-            //return "not authenticated";
-        }
+        checkAuthentication();
         Map<FilterTypes, Object> filterParams = excursionHelper.extractFilterParametersFromFilter(filter);
         List<ExcursionDO> excursions = excursionRepository.getExcursionsMatchingFilterParameters(filterParams);
         return excursions.stream().map(excursionHelper::convertToDTO).collect(
                 Collectors.toList());
     }
 
-    private Optional<String> getCreateExcursionErrorMessage(ExcursionDTO excursionDTO) {
-        if (currentUser.getUsername() == null) {
-            return Optional.of("not authenticated");
-        } else if (!excursionIsValid(excursionDTO)) {
-            return Optional.of("all fields must be provided");
+    private void validateNewExcursion(ExcursionDTO excursionDTO) {
+        checkAuthentication();
+        if (!excursionIsValid(excursionDTO)) {
+            throw new RuntimeException("all fields must be provided");
         } else if (excursionDTO.getStartDate().after(excursionDTO.getEndDate())) {
-            return Optional.of("end date must be after start date");
+            throw new RuntimeException("end date must be after start date");
         }
-        return Optional.empty();
     }
 
-    private Optional<String> getUpdateExcursionErrorMessage(ExcursionDTO excursionDTO) {
-        if (currentUser.getUsername() == null) {
-            return Optional.of("not authenticated");
-        }
-        Optional<String> validationErrorMessage = getFieldValidationErrorMessage(excursionDTO);
-        if (validationErrorMessage.isPresent()) {
-            return validationErrorMessage;
-        }
+    private void validateUpdateExcursion(ExcursionDTO excursionDTO) {
+        checkAuthentication();
+        validateExcursionFields(excursionDTO);
         Optional<ExcursionDO> optionalStoredExcursion = excursionRepository.getExcursionForId(
                 excursionDTO.getId());
         if (!optionalStoredExcursion.isPresent()) {
-            return Optional.of("excursion does not exist");
+            throw new RuntimeException("excursion does not exist");
         }
         ExcursionDO storedExcursion = optionalStoredExcursion.get();
         if (storedExcursion.getOwnerId() != currentUser.getId()) {
-            return Optional.of("user does not have permission to update this excursion");
+            throw new RuntimeException("user does not have permission to update this excursion");
         }
-        return Optional.empty();
     }
 
-    private Optional<String> getFieldValidationErrorMessage(ExcursionDTO excursionDTO) {
+    private void validateExcursionFields(ExcursionDTO excursionDTO) {
         if (!excursionIsValid(excursionDTO)) {
-            return Optional.of("all fields must be valid");
+            throw new RuntimeException("all fields must be valid");
         } else if (excursionDTO.getStartDate().after(excursionDTO.getEndDate())) {
-            return Optional.of("end date must be after start date");
+            throw new RuntimeException("end date must be after start date");
         }
-        return Optional.empty();
     }
 
     private boolean excursionIsValid(ExcursionDTO excursionDTO) {
-        if (excursionDTO.getName() == null || excursionDTO.getName().isEmpty()) {
-            return false;
-        } else if (excursionDTO.getStartLocation() == null || excursionDTO.getStartLocation().isEmpty()) {
-            return false;
-        } else if (excursionDTO.getEndLocation() == null || excursionDTO.getEndLocation().isEmpty()) {
-            return false;
-        } else if (excursionDTO.getStartDate() == null || excursionDTO.getEndDate() == null) {
-            return false;
-        } else if (excursionDTO.getEstimatedCost() < 0 || excursionDTO.getRequiredBuddies() < 1) {
-            return false;
-        } else if (excursionDTO.getDescription() == null || excursionDTO.getDescription().isEmpty()) {
+        if ((excursionDTO.getName() == null || excursionDTO.getName().isEmpty())
+                || (excursionDTO.getStartLocation() == null || excursionDTO.getStartLocation().isEmpty())
+                || (excursionDTO.getEndLocation() == null || excursionDTO.getEndLocation().isEmpty())
+                || (excursionDTO.getStartDate() == null || excursionDTO.getEndDate() == null)
+                || (excursionDTO.getEstimatedCost() < 0 || excursionDTO.getRequiredBuddies() < 1)
+                || (excursionDTO.getDescription() == null || excursionDTO.getDescription().isEmpty())) {
             return false;
         }
         return true;
+    }
+
+    private void checkAuthentication() {
+        if (currentUser.getUsername() == null) {
+            throw new RuntimeException("not authenticated");
+        }
     }
 }
