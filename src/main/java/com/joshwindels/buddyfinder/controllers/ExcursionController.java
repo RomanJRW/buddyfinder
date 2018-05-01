@@ -81,8 +81,12 @@ public class ExcursionController {
     }
 
     private void validateFilter(ExcursionFilter filter) {
-        if (filter.getStartDate().after(filter.getEndDate())) {
+        if ((filter.getStartDate() != null && filter.getEndDate() != null)
+                && (filter.getStartDate().after(filter.getEndDate()))) {
             throw new RuntimeException("end date must be after start date");
+        } else if ((filter.getMinEstimatedCost() != null && filter.getMaxEstimatedCost() != null)
+                && (filter.getMinEstimatedCost() > filter.getMaxEstimatedCost())) {
+            throw new RuntimeException("maximum estimated cost must be greater or equal to minimum estimated cost");
         }
     }
 
