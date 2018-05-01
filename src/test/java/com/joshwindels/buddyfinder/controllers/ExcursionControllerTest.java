@@ -540,7 +540,7 @@ public class ExcursionControllerTest {
     }
 
     @Test
-    public void givenAnExcursionRequest_whenProvidedWitComplexFilter_thenFilteredResultsAreReturned() {
+    public void givenAnExcursionRequest_whenProvidedWithComplexFilter_thenFilteredResultsAreReturned() {
         ExcursionFilter filter = new ExcursionFilterBuilder()
                 .nameContains("test name")
                 .startDate(new Date(2018, 2, 10))
@@ -556,6 +556,27 @@ public class ExcursionControllerTest {
         assertTrue(filterParamsCaptor.getValue().get(FilterTypes.END_DATE).equals(new Date(2018, 9, 15)));
         assertTrue(filterParamsCaptor.getValue().get(FilterTypes.DESCRIPTION_CONTAINS).equals("waterfall"));
     }
+
+    @Test(expected = RuntimeException.class)
+    public void givenAnExcursionRequest_whenFilterStartDateIsAfterStartDate_thenErrorMessageIsReturned() {
+        ExcursionFilter filter = new ExcursionFilterBuilder()
+                .startDate(new Date(2018, 2, 10))
+                .endDate(new Date(2018, 2, 5))
+                .build();
+
+        verifyFilterError(filter, "end date must be after start date");
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void givenAnExcursionRequest_whenFilterMinCostIsGreaterThanMaxCost_thenErrorMessageIsReturned() {
+        ExcursionFilter filter = new ExcursionFilterBuilder()
+                .minEstimatedCost(20)
+                .maxEstimatedCost(10)
+                .build();
+
+        verifyFilterError(filter, "maximum estimated cost must be greater or equal to minimum estimated cost");
+    }
+
 
     private ExcursionDTO getValidExcursionDTO() {
         return new ExcursionDTOBuilder()
@@ -612,6 +633,17 @@ public class ExcursionControllerTest {
     private void verifyDeleteError(int excursionId, String errorMessage) {
         try {
             excursionController.deleteExcursion(excursionId);
+        } catch (RuntimeException ex) {
+            assertEquals(errorMessage, ex.getMessage());
+            verify(excursionRepositoryMock, never()).deleteExcursion(anyInt());
+            throw ex;
+        }
+        fail("expected Exception wasn't thrown");
+    }
+
+    private void verifyFilterError(ExcursionFilter filter, String errorMessage) {
+        try {
+            excursionController.getExcursions(filter);
         } catch (RuntimeException ex) {
             assertEquals(errorMessage, ex.getMessage());
             verify(excursionRepositoryMock, never()).deleteExcursion(anyInt());

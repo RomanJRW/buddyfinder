@@ -73,10 +73,17 @@ public class ExcursionController {
     @GetMapping("/get")
     public List<ExcursionDTO> getExcursions(ExcursionFilter filter) {
         checkAuthentication();
+        validateFilter(filter);
         Map<FilterTypes, Object> filterParams = excursionHelper.extractFilterParametersFromFilter(filter);
         List<ExcursionDO> excursions = excursionRepository.getExcursionsMatchingFilterParameters(filterParams);
         return excursions.stream().map(excursionHelper::convertToDTO).collect(
                 Collectors.toList());
+    }
+
+    private void validateFilter(ExcursionFilter filter) {
+        if (filter.getStartDate().after(filter.getEndDate())) {
+            throw new RuntimeException("end date must be after start date");
+        }
     }
 
     private void validateNewExcursion(ExcursionDTO excursionDTO) {
