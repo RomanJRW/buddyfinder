@@ -11,9 +11,9 @@ public class ExcursionDO {
     private String name;
     private String startLocation;
     private String endLocation;
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
     private Date startDate;
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
     private Date endDate;
     private double estimatedCost;
     private int requiredBuddies;

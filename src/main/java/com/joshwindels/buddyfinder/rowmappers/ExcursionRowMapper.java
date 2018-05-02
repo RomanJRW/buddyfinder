@@ -8,7 +8,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ExcursionRowMapper implements RowMapper {
+public class ExcursionRowMapper implements RowMapper<ExcursionDO> {
 
     @Override
     public ExcursionDO mapRow(ResultSet rs, int rowNum) throws SQLException {

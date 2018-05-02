@@ -49,7 +49,7 @@ public class AuthenticationController {
         }
     }
 
-    @GetMapping("/auth")
+    @PostMapping("/auth")
     public @ResponseBody String authenticateUser(UserDTO userDTO) {
         String storedPassword = userRepository.getStoredPasswordForUser(userDTO.getUsername());
         if (storedPassword == null) {

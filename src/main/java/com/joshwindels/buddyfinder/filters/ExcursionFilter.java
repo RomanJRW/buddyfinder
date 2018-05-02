@@ -9,9 +9,9 @@ public class ExcursionFilter {
     private String nameContains;
     private String startLocationContains;
     private String endLocationContains;
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
     private Date startDate;
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
     private Date endDate;
     private Double minEstimatedCost;
     private Double maxEstimatedCost;

@@ -16,8 +16,7 @@ import com.joshwindels.buddyfinder.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -47,16 +46,16 @@ public class ExcursionController {
         return "excursion created";
     }
 
-    @PatchMapping("/update")
-    public String updateExcursion(ExcursionDTO excursionDTO) {
+    @PostMapping("/update")
+    public @ResponseBody String updateExcursion(ExcursionDTO excursionDTO) {
         validateUpdateExcursion(excursionDTO);
         ExcursionDO excursionDO = excursionHelper.convertToDO(excursionDTO);
         excursionRepository.updateExcursion(excursionDO);
         return "excursion updated";
     }
 
-    @DeleteMapping("/delete")
-    public String deleteExcursion(int excursionId) {
+    @DeleteMapping("/delete/{excursionId}")
+    public @ResponseBody String deleteExcursion(@PathVariable(value = "excursionId") int excursionId) {
         checkAuthentication();
         Optional<ExcursionDO> storedExcursion = excursionRepository.getExcursionForId(excursionId);
         if (storedExcursion.isPresent()) {
@@ -70,8 +69,8 @@ public class ExcursionController {
         }
     }
 
-    @GetMapping("/get")
-    public List<ExcursionDTO> getExcursions(ExcursionFilter filter) {
+    @PostMapping("/get")
+    public @ResponseBody List<ExcursionDTO> getExcursions(ExcursionFilter filter) {
         checkAuthentication();
         validateFilter(filter);
         Map<FilterTypes, Object> filterParams = excursionHelper.extractFilterParametersFromFilter(filter);
@@ -114,6 +113,7 @@ public class ExcursionController {
         if (storedExcursion.getOwnerId() != currentUser.getId()) {
             throw new RuntimeException("user does not have permission to update this excursion");
         }
+        excursionDTO.setOwnerId(storedExcursion.getOwnerId());
     }
 
     private void validateExcursionFields(ExcursionDTO excursionDTO) {
