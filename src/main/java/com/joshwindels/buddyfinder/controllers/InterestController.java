@@ -22,6 +22,7 @@ public class InterestController {
     InterestRepository interestRepository;
 
     public String expressInterest(int excursionId) {
+        checkAuthentication();
         Optional<ExcursionDO> excursionDO = excursionRepository.getExcursionForId(excursionId);
         if (!excursionDO.isPresent()) {
             throw new RuntimeException("excursion not found");
@@ -30,5 +31,11 @@ public class InterestController {
         }
         interestRepository.expressUserInterestInExcursion(currentUser.getId(), excursionId);
         return "interest expressed";
+    }
+
+    private void checkAuthentication() {
+        if (currentUser.getUsername() == null) {
+            throw new RuntimeException("not authenticated");
+        }
     }
 }
