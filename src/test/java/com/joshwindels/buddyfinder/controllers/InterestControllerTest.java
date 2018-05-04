@@ -108,6 +108,13 @@ public class InterestControllerTest {
         getInterestedUsersError("not authorised to view interested users for excursions posted by others");
     }
 
+    @Test(expected = RuntimeException.class)
+    public void givenUnauthorisedUser_whenRequestingInterestedUsers_thenErrorMessageReturned() {
+        when(currentUser.getUsername()).thenReturn(null);
+
+        getInterestedUsersError("not authenticated");
+    }
+
     private void verifyInterestExpressError(String errorMessage) {
         try {
             interestController.expressInterest(EXCURSION_ID);
