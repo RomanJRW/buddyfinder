@@ -73,6 +73,9 @@ public class ExcursionHelper {
         if (filter.getDescriptionContains() != null) {
             filterparams.put(FilterTypes.DESCRIPTION_CONTAINS, filter.getDescriptionContains());
         }
+        if (filter.getDescriptionContains() != null) {
+            filterparams.put(FilterTypes.POSTED_BY, filter.getPostedBy());
+        }
         return filterparams;
     }
 

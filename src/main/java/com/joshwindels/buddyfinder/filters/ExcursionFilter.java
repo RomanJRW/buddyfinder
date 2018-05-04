@@ -18,6 +18,7 @@ public class ExcursionFilter {
     private Integer minRequiredBuddies;
     private Integer maxRequiredBuddies;
     private String descriptionContains;
+    private Integer postedBy;
 
     public String getNameContains() {
         return nameContains;
@@ -97,5 +98,13 @@ public class ExcursionFilter {
 
     public void setDescriptionContains(String descriptionContains) {
         this.descriptionContains = descriptionContains;
+    }
+
+    public Integer getPostedBy() {
+        return postedBy;
+    }
+
+    public void setPostedBy(int postedBy) {
+        this.postedBy = postedBy;
     }
 }
