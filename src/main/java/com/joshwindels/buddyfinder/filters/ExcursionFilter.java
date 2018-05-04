@@ -9,16 +9,14 @@ public class ExcursionFilter {
     private String nameContains;
     private String startLocationContains;
     private String endLocationContains;
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
-    private Date startDate;
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
-    private Date endDate;
+    @DateTimeFormat(pattern = "dd-MM-yyyy") private Date startDate;
+    @DateTimeFormat(pattern = "dd-MM-yyyy") private Date endDate;
     private Double minEstimatedCost;
     private Double maxEstimatedCost;
     private Integer minRequiredBuddies;
     private Integer maxRequiredBuddies;
     private String descriptionContains;
-    private Integer postedBy;
+    private String postedBy;
 
     public String getNameContains() {
         return nameContains;
@@ -100,11 +98,11 @@ public class ExcursionFilter {
         this.descriptionContains = descriptionContains;
     }
 
-    public Integer getPostedBy() {
+    public String getPostedBy() {
         return postedBy;
     }
 
-    public void setPostedBy(int postedBy) {
+    public void setPostedBy(String postedBy) {
         this.postedBy = postedBy;
     }
 }

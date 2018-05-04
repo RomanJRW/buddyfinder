@@ -55,7 +55,7 @@ public class ExcursionFilterBuilder {
         return this;
     }
 
-    public ExcursionFilterBuilder postedBy(int userId) {
+    public ExcursionFilterBuilder postedBy(String userId) {
         excursionFilter.setPostedBy(userId);
         return this;
     }
