@@ -25,17 +25,16 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class InterestControllerTest {
 
-    public static final int EXCURSION_ID = 1;
-    public static final int OWNER_ID = 10;
-    public static final String EXCURSION_NAME = "new excursion";
-    public static final String START_LOCATION = "Belmopan";
-    public static final String END_LOCATION = "Belize City";
-    public static final Date START_DATE = new Date(2018, 10, 13);
-    public static final Date END_DATE = new Date(2018, 10, 15);
-    public static final int ESTIMATED_COST = 50;
-    public static final int REQUIRED_BUDDIES = 2;
-    public static final String DESCRIPTION = "a road trip between Belmopan and Belize City, stopping off at some temples along the way";
-    public static final String USERNAME = "username";
+    private static final int EXCURSION_ID = 1;
+    private static final int OWNER_ID = 10;
+    private static final String EXCURSION_NAME = "new excursion";
+    private static final String START_LOCATION = "Belmopan";
+    private static final String END_LOCATION = "Belize City";
+    private static final Date START_DATE = new Date(2018, 10, 13);
+    private static final Date END_DATE = new Date(2018, 10, 15);
+    private static final int ESTIMATED_COST = 50;
+    private static final int REQUIRED_BUDDIES = 2;
+    private static final String DESCRIPTION = "a road trip between Belmopan and Belize City, stopping off at some temples along the way";
     private static final int USER_ID = 10;
 
     @Mock
@@ -64,7 +63,7 @@ public class InterestControllerTest {
         when(currentUser.getId()).thenReturn(USER_ID);
         when(excursionRepository.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.empty());
 
-        verifyInterestError("excursion not found");
+        verifyInterestExpressError("excursion not found");
     }
 
     @Test(expected = RuntimeException.class)
@@ -72,17 +71,23 @@ public class InterestControllerTest {
         when(currentUser.getId()).thenReturn(USER_ID);
         when(excursionRepository.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getExcursionDO()));
 
-        verifyInterestError("cannot express interest in own excursions");
+        verifyInterestExpressError("cannot express interest in own excursions");
     }
 
     @Test(expected = RuntimeException.class)
     public void givenUnauthenticatedUser_whenUserExpressesInterest_thenInterestIsNotStoredAndErrorMessageReturned() {
         when(currentUser.getId()).thenReturn(null);
 
-        verifyInterestError("not authenticated");
+        verifyInterestExpressError("not authenticated");
     }
 
-    private void verifyInterestError(String errorMessage) {
+    @Test
+    public void givenExistingExcursion_whenRequestingInterestedUsers_thenUsersWithExpressedInterestAreReturned() {
+
+        assertEquals("interest expressed", interestController.expressInterest(EXCURSION_ID));
+    }
+
+    private void verifyInterestExpressError(String errorMessage) {
         try {
             interestController.expressInterest(EXCURSION_ID);
         } catch (RuntimeException ex) {

@@ -36,17 +36,18 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class ExcursionControllerTest {
 
-    public static final int EXCURSION_ID = 1;
-    public static final int OWNER_ID = 10;
-    public static final String EXCURSION_NAME = "new excursion";
-    public static final String START_LOCATION = "Belmopan";
-    public static final String END_LOCATION = "Belize City";
-    public static final Date START_DATE = new Date(2018, 10, 13);
-    public static final Date END_DATE = new Date(2018, 10, 15);
-    public static final int ESTIMATED_COST = 50;
-    public static final int REQUIRED_BUDDIES = 2;
-    public static final String DESCRIPTION = "a road trip between Belmopan and Belize City, stopping off at some temples along the way";
-    public static final String USERNAME = "username";
+    private static final int EXCURSION_ID = 1;
+    private static final int OWNER_ID = 10;
+    private static final String EXCURSION_NAME = "new excursion";
+    private static final String START_LOCATION = "Belmopan";
+    private static final String END_LOCATION = "Belize City";
+    private static final Date START_DATE = new Date(2018, 10, 13);
+    private static final Date END_DATE = new Date(2018, 10, 15);
+    private static final int ESTIMATED_COST = 50;
+    private static final int REQUIRED_BUDDIES = 2;
+    private static final String DESCRIPTION = "a road trip between Belmopan and Belize City, stopping off at some temples along the way";
+    private static final String USERNAME = "username";
+
 
     @Mock
     CurrentUser currentUserMock;
