@@ -8,12 +8,15 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import com.joshwindels.buddyfinder.dos.CurrentUser;
 import com.joshwindels.buddyfinder.dos.ExcursionDO;
 import com.joshwindels.buddyfinder.dos.ExcursionDOBuilder;
+import com.joshwindels.buddyfinder.dos.InterestedUser;
 import com.joshwindels.buddyfinder.repositories.ExcursionRepository;
 import com.joshwindels.buddyfinder.repositories.InterestRepository;
 import org.junit.Test;
@@ -36,6 +39,9 @@ public class InterestControllerTest {
     private static final int REQUIRED_BUDDIES = 2;
     private static final String DESCRIPTION = "a road trip between Belmopan and Belize City, stopping off at some temples along the way";
     private static final int USER_ID = 10;
+    private static final String USERNAME = "username";
+    private static final String EMAIL_ADDRESS = "email@email.com";
+    private static final String TELEPHONE_NUMBER = "+447700 012345";
 
     @Mock
     InterestRepository interestRepository;
@@ -83,8 +89,11 @@ public class InterestControllerTest {
 
     @Test
     public void givenExistingExcursion_whenRequestingInterestedUsers_thenUsersWithExpressedInterestAreReturned() {
+        when(interestRepository.getUsersInterestedInExcursion(anyInt())).thenReturn(Arrays.asList(getInterestedUser(), getInterestedUser()));
 
-        assertEquals("interest expressed", interestController.expressInterest(EXCURSION_ID));
+        List<InterestedUser> interestedUserList = interestController.getInterestedUsersForExcursion(EXCURSION_ID);
+        verify(interestRepository, times(1)).getUsersInterestedInExcursion(EXCURSION_ID);
+        assertEquals(interestedUserList, Arrays.asList(getInterestedUser(), getInterestedUser()));
     }
 
     private void verifyInterestExpressError(String errorMessage) {
@@ -111,6 +120,14 @@ public class InterestControllerTest {
                 .requiredBuddies(REQUIRED_BUDDIES)
                 .description(DESCRIPTION)
                 .build();
+    }
+
+    private InterestedUser getInterestedUser() {
+        InterestedUser interestedUser = new InterestedUser();
+        interestedUser.setUsername(USERNAME);
+        interestedUser.setEmailAddress(EMAIL_ADDRESS);
+        interestedUser.setTelephoneNumber(TELEPHONE_NUMBER);
+        return interestedUser;
     }
 
 }
