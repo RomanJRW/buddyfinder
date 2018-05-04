@@ -57,7 +57,7 @@ public class InterestControllerTest {
 
     @Test
     public void givenExistingExcursion_whenUserExpressesInterest_thenInterestIsStoredAndSuccessMessageReturned() {
-        when(currentUser.getId()).thenReturn(USER_ID);
+        when(currentUser.getUsername()).thenReturn(USERNAME);
         when(excursionRepository.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getExcursionDO()));
 
         assertEquals("interest expressed", interestController.expressInterest(EXCURSION_ID));
@@ -66,7 +66,7 @@ public class InterestControllerTest {
 
     @Test(expected = RuntimeException.class)
     public void givenExcursionDoesNotExist_whenUserExpressesInterest_thenInterestIsNotStoredAndErrorMessageReturned() {
-        when(currentUser.getId()).thenReturn(USER_ID);
+        when(currentUser.getUsername()).thenReturn(USERNAME);
         when(excursionRepository.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.empty());
 
         verifyInterestExpressError("excursion not found");
@@ -74,6 +74,7 @@ public class InterestControllerTest {
 
     @Test(expected = RuntimeException.class)
     public void givenExcursionPostedByCurrentUser_whenCurrentUserExpressesInterest_thenInterestIsNotStoredAndErrorMessageReturned() {
+        when(currentUser.getUsername()).thenReturn(USERNAME);
         when(currentUser.getId()).thenReturn(USER_ID);
         when(excursionRepository.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getExcursionDO()));
 
@@ -82,13 +83,16 @@ public class InterestControllerTest {
 
     @Test(expected = RuntimeException.class)
     public void givenUnauthenticatedUser_whenUserExpressesInterest_thenInterestIsNotStoredAndErrorMessageReturned() {
-        when(currentUser.getId()).thenReturn(null);
+        when(currentUser.getUsername()).thenReturn(null);
 
         verifyInterestExpressError("not authenticated");
     }
 
     @Test
-    public void givenExistingExcursion_whenRequestingInterestedUsers_thenUsersWithExpressedInterestAreReturned() {
+    public void givenExistingExcursionPostedByUser_whenRequestingInterestedUsers_thenUsersWithExpressedInterestAreReturned() {
+        when(currentUser.getUsername()).thenReturn(USERNAME);
+        when(currentUser.getId()).thenReturn(USER_ID);
+        when(excursionRepository.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getExcursionDO()));
         when(interestRepository.getUsersInterestedInExcursion(anyInt())).thenReturn(Arrays.asList(getInterestedUser(), getInterestedUser()));
 
         List<InterestedUser> interestedUserList = interestController.getInterestedUsersForExcursion(EXCURSION_ID);
@@ -96,9 +100,28 @@ public class InterestControllerTest {
         assertEquals(interestedUserList, Arrays.asList(getInterestedUser(), getInterestedUser()));
     }
 
+    @Test(expected = RuntimeException.class)
+    public void givenExistingExcursionNotPostedByUser_whenRequestingInterestedUsers_thenErrorMessageReturned() {
+        when(currentUser.getUsername()).thenReturn(USERNAME);
+        when(excursionRepository.getExcursionForId(EXCURSION_ID)).thenReturn(Optional.of(getExcursionDO()));
+
+        getInterestedUsersError("not authorised to view interested users for excursions posted by others");
+    }
+
     private void verifyInterestExpressError(String errorMessage) {
         try {
             interestController.expressInterest(EXCURSION_ID);
+        } catch (RuntimeException ex) {
+            assertEquals(errorMessage, ex.getMessage());
+            verify(interestRepository, never()).expressUserInterestInExcursion(anyInt(), anyInt());
+            throw ex;
+        }
+        fail("expected Exception wasn't thrown");
+    }
+
+    private void getInterestedUsersError(String errorMessage) {
+        try {
+            interestController.getInterestedUsersForExcursion(EXCURSION_ID);
         } catch (RuntimeException ex) {
             assertEquals(errorMessage, ex.getMessage());
             verify(interestRepository, never()).expressUserInterestInExcursion(anyInt(), anyInt());

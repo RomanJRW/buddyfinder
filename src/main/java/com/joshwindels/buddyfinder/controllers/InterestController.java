@@ -43,7 +43,13 @@ public class InterestController {
 
     @GetMapping("/users/{excursionId}")
     public List<InterestedUser> getInterestedUsersForExcursion(int excursionId) {
-
+        checkAuthentication();
+        Optional<ExcursionDO> excursionDO = excursionRepository.getExcursionForId(excursionId);
+        if (!excursionDO.isPresent()) {
+            throw new RuntimeException("excursion not found");
+        } else if (excursionDO.get().getOwnerId() != currentUser.getId()) {
+            throw new RuntimeException("not authorised to view interested users for excursions posted by others");
+        }
         return interestRepository.getUsersInterestedInExcursion(excursionId);
     }
 
