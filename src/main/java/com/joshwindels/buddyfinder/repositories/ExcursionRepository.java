@@ -71,7 +71,8 @@ public class ExcursionRepository {
     }
 
     public List<ExcursionDO> getExcursionsMatchingFilterParameters(Map<FilterTypes, Object> filterParameters) {
-        String sql = " SELECT * FROM excursions ";
+        String sql = " SELECT * FROM excursions "
+                + " JOIN users ON owner_id = users.id ";
         MapSqlParameterSource params = new MapSqlParameterSource();
         if (!filterParameters.isEmpty()) {
             sql = sql + " WHERE id > 0 ";
@@ -106,6 +107,9 @@ public class ExcursionRepository {
             }
             if (filterParameters.containsKey(FilterTypes.DESCRIPTION_CONTAINS)) {
                 sql = sql + " AND description LIKE '%" + filterParameters.get(FilterTypes.DESCRIPTION_CONTAINS) + "%' ";
+            }
+            if (filterParameters.containsKey(FilterTypes.POSTED_BY)) {
+                sql = sql + " AND users.username = " + filterParameters.get(FilterTypes.POSTED_BY);
             }
         }
         return namedParameterJdbcTemplate.query(sql, params, excursionRowMapper);
