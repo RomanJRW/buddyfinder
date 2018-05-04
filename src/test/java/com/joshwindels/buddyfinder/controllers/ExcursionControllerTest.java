@@ -541,6 +541,27 @@ public class ExcursionControllerTest {
     }
 
     @Test
+    public void givenAnExcursionRequest_whenProvidedWithPostedByFilter_thenFilteredResultsAreReturned() {
+        ExcursionFilter filter = new ExcursionFilterBuilder().postedBy(USERNAME).build();
+
+        excursionController.getExcursions(filter);
+        verify(excursionRepositoryMock, times(1)).getExcursionsMatchingFilterParameters(filterParamsCaptor.capture());
+        assertTrue(filterParamsCaptor.getValue().size() == 1);
+        assertTrue(filterParamsCaptor.getValue().get(FilterTypes.POSTED_BY).equals(USERNAME));
+    }
+
+    @Test
+    public void givenAnExcursionRequest_whenProvidedWithPostedByAndDescriptionContainsFilter_thenFilteredResultsAreReturned() {
+        ExcursionFilter filter = new ExcursionFilterBuilder().postedBy(USERNAME).descriptonContains("waterfall").build();
+
+        excursionController.getExcursions(filter);
+        verify(excursionRepositoryMock, times(1)).getExcursionsMatchingFilterParameters(filterParamsCaptor.capture());
+        assertTrue(filterParamsCaptor.getValue().size() == 2);
+        assertTrue(filterParamsCaptor.getValue().get(FilterTypes.POSTED_BY).equals(USERNAME));
+        assertTrue(filterParamsCaptor.getValue().get(FilterTypes.DESCRIPTION_CONTAINS).equals("waterfall"));
+    }
+
+    @Test
     public void givenAnExcursionRequest_whenProvidedWithComplexFilter_thenFilteredResultsAreReturned() {
         ExcursionFilter filter = new ExcursionFilterBuilder()
                 .nameContains("test name")
