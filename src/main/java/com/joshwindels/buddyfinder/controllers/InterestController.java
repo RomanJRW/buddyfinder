@@ -25,6 +25,8 @@ public class InterestController {
         Optional<ExcursionDO> excursionDO = excursionRepository.getExcursionForId(excursionId);
         if (!excursionDO.isPresent()) {
             throw new RuntimeException("excursion not found");
+        } else if (excursionDO.get().getOwnerId() == currentUser.getId()) {
+            throw new RuntimeException("cannot express interest in own excursions");
         }
         interestRepository.expressUserInterestInExcursion(currentUser.getId(), excursionId);
         return "interest expressed";
