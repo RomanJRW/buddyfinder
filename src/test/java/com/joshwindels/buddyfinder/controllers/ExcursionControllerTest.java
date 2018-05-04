@@ -568,6 +568,26 @@ public class ExcursionControllerTest {
                 .startDate(new Date(2018, 2, 10))
                 .endDate(new Date(2018, 9, 15))
                 .descriptonContains("waterfall")
+                .postedBy(USERNAME)
+                .build();
+
+        excursionController.getExcursions(filter);
+        verify(excursionRepositoryMock, times(1)).getExcursionsMatchingFilterParameters(filterParamsCaptor.capture());
+        assertTrue(filterParamsCaptor.getValue().size() == 5);
+        assertTrue(filterParamsCaptor.getValue().get(FilterTypes.NAME_CONTAINS).equals("test name"));
+        assertTrue(filterParamsCaptor.getValue().get(FilterTypes.START_DATE).equals(new Date(2018, 2, 10)));
+        assertTrue(filterParamsCaptor.getValue().get(FilterTypes.END_DATE).equals(new Date(2018, 9, 15)));
+        assertTrue(filterParamsCaptor.getValue().get(FilterTypes.DESCRIPTION_CONTAINS).equals("waterfall"));
+        assertTrue(filterParamsCaptor.getValue().get(FilterTypes.POSTED_BY).equals(USERNAME));
+    }
+
+    @Test
+    public void givenAnExcursionRequest_whenProvidedWithComplexFilterIncludingPostedBy_thenFilteredResultsAreReturned() {
+        ExcursionFilter filter = new ExcursionFilterBuilder()
+                .nameContains("test name")
+                .startDate(new Date(2018, 2, 10))
+                .endDate(new Date(2018, 9, 15))
+                .descriptonContains("waterfall")
                 .build();
 
         excursionController.getExcursions(filter);
